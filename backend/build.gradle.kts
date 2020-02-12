@@ -23,6 +23,18 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+    processResources {
+        dependsOn(":frontend:build")
+        doLast {
+            copy {
+                from("../frontend/build/distributions/static")
+                into("src/main/resources/static")
+            }
+        }
+    }
+    clean {
+        delete("src/main/resources/static")
+    }
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
