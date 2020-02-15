@@ -23,6 +23,8 @@ kotlin {
     sourceSets {
         main {
             dependencies {
+                val ktorVersion = "1.3.1"
+
                 implementation(kotlin("stdlib-js"))
                 implementation(project(":common"))
 
@@ -42,8 +44,12 @@ kotlin {
                 //Coroutines
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.3")
 
-                // Json serializer/deserializer
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.14.0")
+                // Ajax calls
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-json-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
+                implementation(npm("text-encoding"))
+                implementation(npm("abort-controller"))
             }
         }
     }

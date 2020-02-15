@@ -28,7 +28,7 @@ class UserManagerComponent : RComponent<RProps, UserManagerState>() {
 
     private suspend fun reloadUsers() {
         try {
-            val usersResponse = Api.get("/api/users", UsersResponse.serializer())
+            val usersResponse = Api.get<UsersResponse>("/api/users")
             setState {
                 data = UserManagerDataSuccess(usersResponse.users)
             }
