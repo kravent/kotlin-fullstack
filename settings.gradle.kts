@@ -1,3 +1,5 @@
 rootProject.name = "kotlin-fullstack"
 
-include("frontend", "backend")
+include("common")
+include("frontend")
+include("backend")

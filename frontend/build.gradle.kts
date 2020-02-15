@@ -23,6 +23,7 @@ kotlin {
         main {
             dependencies {
                 implementation(kotlin("stdlib-js"))
+                implementation(project(":common"))
 
                 //React, React DOM, React Router DOM + Wrappers
                 implementation("org.jetbrains:kotlin-react:16.9.0-pre.91-kotlin-1.3.61")

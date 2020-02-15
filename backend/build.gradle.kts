@@ -12,8 +12,11 @@ repositories {
 }
 
 dependencies {
+    val ktorVersion = "1.3.1"
     implementation(kotlin("stdlib-jdk8"))
-    implementation("io.ktor:ktor-server-netty:1.3.1")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation(project(":common"))
 }
 
 tasks {
