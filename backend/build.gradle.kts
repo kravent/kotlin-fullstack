@@ -28,22 +28,13 @@ tasks {
     }
     processResources {
         dependsOn(":frontend:build")
-        doLast {
-            copy {
-                from("../frontend/build/distributions/static")
-                into("src/main/resources/static")
-            }
-        }
-    }
-    clean {
-        delete("src/main/resources/static")
     }
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
 kotlin.sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
 
-sourceSets["main"].resources.srcDirs("src/main/resources")
+sourceSets["main"].resources.srcDirs("src/main/resources", "../frontend/build/distributions")
 sourceSets["test"].resources.srcDirs("src/test/resources")
 
 application {
