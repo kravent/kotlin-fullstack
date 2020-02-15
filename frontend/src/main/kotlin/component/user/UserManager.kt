@@ -1,14 +1,11 @@
 package component.user
 
+import ajax.Api
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import me.agaman.kotlinfullstack.model.UsersResponse
 import react.*
 import react.dom.div
-import kotlin.browser.window
 
 sealed class UserManagerData;
 object UserManagerDataLoading : UserManagerData()
@@ -31,11 +28,9 @@ class UserManagerComponent : RComponent<RProps, UserManagerState>() {
 
     private suspend fun reloadUsers() {
         try {
-            val json = Json(JsonConfiguration.Default)
-            val usersResponse = window.fetch("/api/users").await().text().await().let { json.parse(UsersResponse.serializer(), it) }
-            val newData = UserManagerDataSuccess(usersResponse.users)
+            val usersResponse = Api.get("/api/users", UsersResponse.serializer())
             setState {
-                data = newData
+                data = UserManagerDataSuccess(usersResponse.users)
             }
         } catch (e: Exception) {
             setState {
