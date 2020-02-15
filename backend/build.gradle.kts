@@ -4,6 +4,7 @@ version = "1.0-SNAPSHOT"
 plugins {
     application
     kotlin("jvm") version "1.3.61"
+    kotlin("plugin.serialization") version "1.3.61"
 }
 
 repositories {
@@ -15,7 +16,7 @@ dependencies {
     val ktorVersion = "1.3.1"
     implementation(kotlin("stdlib-jdk8"))
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation(project(":common"))
 }

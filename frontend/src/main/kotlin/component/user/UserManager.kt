@@ -3,22 +3,26 @@ package component.user
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import me.agaman.kotlinfullstack.model.UsersResponse
 import react.*
 import react.dom.div
 import kotlin.browser.window
 
+sealed class UserManagerData;
+object UserManagerDataLoading : UserManagerData()
+data class UserManagerDataError(val error: String) : UserManagerData()
+data class UserManagerDataSuccess(val users: List<String>) : UserManagerData()
+
+
 interface UserManagerState : RState {
-    var loading: Boolean
-    var error: String?
-    var userList: List<String>
+    var data: UserManagerData
 }
 
 class UserManagerComponent : RComponent<RProps, UserManagerState>() {
     override fun UserManagerState.init() {
-        loading = true
-        error = null
-        userList = emptyList()
+        data = UserManagerDataLoading
 
         MainScope().launch {
             reloadUsers()
@@ -27,35 +31,29 @@ class UserManagerComponent : RComponent<RProps, UserManagerState>() {
 
     private suspend fun reloadUsers() {
         try {
-            val usersResponse = window.fetch("/api/users").await().json().await().unsafeCast<UsersResponse>()
+            val json = Json(JsonConfiguration.Default)
+            val usersResponse = window.fetch("/api/users").await().text().await().let { json.parse(UsersResponse.serializer(), it) }
+            val newData = UserManagerDataSuccess(usersResponse.users)
             setState {
-                    loading = false
-                    error = null
-                    userList = usersResponse.users
-                }
+                data = newData
+            }
         } catch (e: Exception) {
             setState {
-                loading = false
-                error = e.message
-                userList = emptyList()
+                data = UserManagerDataError(e.message.orEmpty())
             }
         }
     }
 
     private fun addUser(userName: String) {
-        if (!state.userList.contains(userName)) {
-            setState {
-                userList += userName
-            }
-        }
+        TODO()
     }
 
     override fun RBuilder.render() {
-        when {
-            state.loading -> div { +"Loading..." }
-            state.error != null -> div { +"Error loading users: ${state.error}" }
-            else -> {
-                userList(state.userList)
+        when(val data = state.data) {
+            is UserManagerDataLoading -> div { +"Loading..." }
+            is UserManagerDataError -> div { +"Error loading users: ${data.error}" }
+            is UserManagerDataSuccess -> {
+                userList(data.users)
                 userCreator(onCreateUserFunction = { addUser(it) })
             }
         }

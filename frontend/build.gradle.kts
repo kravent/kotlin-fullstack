@@ -1,5 +1,6 @@
 plugins {
     kotlin("js") version "1.3.61"
+    kotlin("plugin.serialization") version "1.3.61"
 }
 
 group = "me.agaman.kotlinfullstack"
@@ -40,6 +41,9 @@ kotlin {
 
                 //Coroutines
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.3")
+
+                // Json serializer/deserializer
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.14.0")
             }
         }
     }
