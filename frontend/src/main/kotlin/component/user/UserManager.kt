@@ -4,6 +4,7 @@ import ajax.Api
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import me.agaman.kotlinfullstack.model.UsersResponse
+import me.agaman.kotlinfullstack.route.ApiRoute
 import react.*
 import react.dom.div
 
@@ -28,7 +29,7 @@ class UserManagerComponent : RComponent<RProps, UserManagerState>() {
 
     private suspend fun reloadUsers() {
         try {
-            val usersResponse = Api.get<UsersResponse>("/api/users")
+            val usersResponse = Api.get<UsersResponse>(ApiRoute.USERS)
             setState {
                 data = UserManagerDataSuccess(usersResponse.users)
             }

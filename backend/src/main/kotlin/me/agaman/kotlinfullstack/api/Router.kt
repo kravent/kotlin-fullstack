@@ -7,18 +7,22 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.serialization.serialization
 import me.agaman.kotlinfullstack.model.UsersResponse
+import me.agaman.kotlinfullstack.route.ApiRoute
 
 fun Route.apiRouter() {
     install(ContentNegotiation) {
         serialization()
     }
 
-    get("/users") {
+    get(ApiRoute.USERS.path) {
         call.respond(UsersResponse(listOf("user1", "user2")))
     }
-    get("*") {
-        call.respond(HttpStatusCode.NotFound)
+    route("*") {
+        handle {
+            call.respond(HttpStatusCode.NotFound)
+        }
     }
 }

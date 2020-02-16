@@ -14,6 +14,7 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
 import me.agaman.kotlinfullstack.api.apiRouter
+import me.agaman.kotlinfullstack.route.Route
 
 private const val REACT_PAGE = """
 <!doctype html>
@@ -24,7 +25,7 @@ private const val REACT_PAGE = """
 </head>
 <body>
 <div id="root"></div>
-<script src="static/app.js"></script>
+<script src="/static/app.js"></script>
 </body>
 </html>
 """
@@ -36,10 +37,10 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(Routing) {
-        route("/api") {
+        route(Route.API.path) {
             apiRouter()
         }
-        static("/static") {
+        static(Route.STATIC.path) {
             resources("static")
         }
         get("/") {
