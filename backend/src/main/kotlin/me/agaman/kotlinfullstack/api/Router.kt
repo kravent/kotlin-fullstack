@@ -20,7 +20,8 @@ fun Route.apiRouter() {
     get(ApiRoute.USERS.path) {
         call.respond(UsersResponse(listOf("user1", "user2")))
     }
-    route("*") {
+
+    route("{...}") {
         handle {
             call.respond(HttpStatusCode.NotFound)
         }

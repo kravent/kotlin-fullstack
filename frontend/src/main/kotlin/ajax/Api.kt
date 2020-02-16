@@ -22,7 +22,7 @@ object Api {
         method = HttpMethod.Get
         url {
             takeFrom(window.location.href)
-            encodedPath = "${Route.API.path}${apiRoute.path}"
+            encodedPath = "${Route.API.path}/${apiRoute.path}"
         }
     }
 
@@ -30,7 +30,7 @@ object Api {
         method = HttpMethod.Post
         url {
             takeFrom(window.location.href)
-            encodedPath = "${Route.API.path}${apiRoute.path}"
+            encodedPath = "${Route.API.path}/${apiRoute.path}"
         }
         body = data
     }

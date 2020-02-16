@@ -1,7 +1,6 @@
 package me.agaman.kotlinfullstack
 
 import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -30,9 +29,6 @@ private const val REACT_PAGE = """
 </html>
 """
 
-private suspend fun ApplicationCall.respondReactPage() =
-    respondText(REACT_PAGE, ContentType.Text.Html)
-
 fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
@@ -40,14 +36,13 @@ fun Application.module() {
         route(Route.API.path) {
             apiRouter()
         }
+
         static(Route.STATIC.path) {
             resources("static")
         }
-        get("/") {
-            call.respondReactPage()
-        }
-        get("*") {
-            call.respondReactPage()
+
+        get("{...}") {
+            call.respondText(REACT_PAGE, ContentType.Text.Html)
         }
     }
 }
