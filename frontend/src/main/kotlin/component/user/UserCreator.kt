@@ -4,52 +4,39 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.events.Event
-import react.*
+import react.RBuilder
+import react.RProps
 import react.dom.button
 import react.dom.div
 import react.dom.input
+import react.rFunction
+import react.useState
 import utils.withTarget
 
-interface UserCreatorProps : RProps {
-    var onCreateUserFunction: (userName: String) -> Unit
-}
+data class UserCreatorProps(
+    val onCreateUserFunction: (userName: String) -> Unit
+) : RProps
 
-interface UserCreatorState : RState {
-    var userName: String
-}
+val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
+    val (userName, setUserName) = useState("")
 
-class UserCreatorComponent : RComponent<UserCreatorProps, UserCreatorState>() {
-    override fun UserCreatorState.init() {
-        userName = ""
-    }
-
-    private fun onUserNameChange(userNameInput: HTMLInputElement) {
-        setState {
-            userName = userNameInput.value
-        }
-    }
-
-    private fun onAddName(event: Event) {
-        if (state.userName.isNotEmpty()) {
-            props.onCreateUserFunction(state.userName)
-        }
-    }
-
-    override fun RBuilder.render() {
-        div {
-            input(InputType.text) {
-                attrs.value = state.userName
-                attrs.onChangeFunction = withTarget(::onUserNameChange)
-            }
-            button {
-                attrs.onClickFunction = ::onAddName
-                +"Add"
+    div {
+        input(InputType.text) {
+            attrs.value = userName
+            attrs.onChangeFunction = withTarget { userNameInput: HTMLInputElement ->
+                setUserName(userNameInput.value)
             }
         }
+        button {
+            attrs.onClickFunction = {
+                if (userName.isNotEmpty()) {
+                    props.onCreateUserFunction(userName)
+                }
+            }
+            +"Add"
+        }
     }
 }
 
-fun RBuilder.userCreator(onCreateUserFunction: (userName: String) -> Unit) = child(UserCreatorComponent::class) {
-    attrs.onCreateUserFunction = onCreateUserFunction
-}
+fun RBuilder.userCreator(onCreateUserFunction: (userName: String) -> Unit) =
+    UserCreator.node(UserCreatorProps(onCreateUserFunction))

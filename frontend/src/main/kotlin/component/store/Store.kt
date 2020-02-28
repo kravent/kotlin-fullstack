@@ -8,7 +8,7 @@ import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 
-private val STORE = createStore<StoreState, RAction, dynamic>(::storeReducer, StoreState(), rEnhancer())
+private val Store = createStore<StoreState, RAction, dynamic>(::storeReducer, StoreState(), rEnhancer())
 
 data class StoreState(
     val loggedUser: String? = null
@@ -24,6 +24,6 @@ fun storeReducer(previousState: StoreState, action: RAction) = when (action) {
 class LoginStoreAction(val userName: String) : RAction
 object LogoutStoreAction : RAction
 
-fun RBuilder.storeProvider(handler: RHandler<ProviderProps>) = provider(STORE) {
+fun RBuilder.storeProvider(handler: RHandler<ProviderProps>) = provider(Store) {
     handler()
 }

@@ -14,43 +14,47 @@ import redux.WrapperAction
 import styled.css
 import styled.styledDiv
 
-interface NavBarComponentProps : RProps {
+interface NavBarStateProps : RProps {
     var userName: String?
+}
+
+interface NavBarDispatchProps : RProps {
     var onLogin: (String) -> Unit
     var onLogout: () -> Unit
 }
 
-class NavBarComponent : RComponent<NavBarComponentProps, RState>() {
-    override fun RBuilder.render() {
-        styledDiv {
-            css {
-                borderBottomStyle = BorderStyle.solid
-                borderWidth = 4.px
-                textAlign = TextAlign.right
-            }
+data class NavBarProps(
+    val userName: String?,
+    val onLogin: (String) -> Unit,
+    val onLogout: () -> Unit
+) : RProps
 
-            div {
-                props.userName.let { userName ->
-                    if (userName == null) {
-                        button {
-                            attrs.onClickFunction = { props.onLogin("user1") }
-                            +"Login"
-                        }
-                    } else {
-                        button {
-                            attrs.onClickFunction = { props.onLogout() }
-                            +"Logout ($userName)"
-                        }
-                    }
+val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
+    styledDiv {
+        css {
+            borderBottomStyle = BorderStyle.solid
+            borderWidth = 4.px
+            textAlign = TextAlign.right
+        }
+
+        div {
+            if (props.userName == null) {
+                button {
+                    attrs.onClickFunction = { props.onLogin("user1") }
+                    +"Login"
+                }
+            } else {
+                button {
+                    attrs.onClickFunction = { props.onLogout() }
+                    +"Logout (${props.userName})"
                 }
             }
         }
     }
-
 }
 
-private val navBarLink =
-    rConnect<StoreState, RAction, WrapperAction, RProps, NavBarComponentProps, NavBarComponentProps, NavBarComponentProps>(
+val NavBarConnector =
+    rConnect<StoreState, RAction, WrapperAction, RProps, NavBarStateProps, NavBarDispatchProps, NavBarProps>(
         { state, _ ->
             userName = state.loggedUser
         },
@@ -58,6 +62,8 @@ private val navBarLink =
             onLogin = { userName -> dispatch(LoginStoreAction(userName)) }
             onLogout = { dispatch(LogoutStoreAction) }
         }
-    )(NavBarComponent::class.rClass)
+    )
 
-fun RBuilder.navBar() = navBarLink {}
+val ConnectedNavBar: RClass<RProps> = NavBarConnector(NavBar)
+
+fun RBuilder.navBar(): ReactElement = ConnectedNavBar {}
