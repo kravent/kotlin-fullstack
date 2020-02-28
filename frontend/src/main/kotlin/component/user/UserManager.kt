@@ -18,11 +18,12 @@ data class UserManagerDataError(val error: String) : UserManagerData()
 data class UserManagerDataSuccess(val users: List<String>) : UserManagerData()
 
 val UserManager = rFunction("UserManager") { _: RProps ->
-    val (data, setData) = useState<UserManagerData>(UserManagerDataLoading)
+    val (state, setState) = useState<UserManagerData>(UserManagerDataLoading)
 
     val reloadUsers = {
+        setState(UserManagerDataLoading)
         MainScope().launch {
-            setData(
+            setState(
                 try {
                     val response = Api.get<UserListResponse>(ApiRoute.USERS_LIST)
                     UserManagerDataSuccess(response.users)
@@ -34,8 +35,9 @@ val UserManager = rFunction("UserManager") { _: RProps ->
     }
 
     val addUser = { userName: String ->
+        setState(UserManagerDataLoading)
         MainScope().launch {
-            setData(
+            setState(
                 try {
                     val response = Api.post<UserCreateResponse>(ApiRoute.USER_CREATE, UserCreateRequest(userName))
                     when(val error = response.error) {
@@ -53,17 +55,17 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         reloadUsers()
     }
 
-    when(data) {
+    when(state) {
         is UserManagerDataLoading -> div { +"Loading..." }
         is UserManagerDataError -> div {
-            div { +data.error }
+            div { +state.error }
             button {
                 attrs.onClickFunction = { reloadUsers() }
                 +"Reload"
             }
         }
         is UserManagerDataSuccess -> {
-            userList(data.users)
+            userList(state.users)
             userCreator(onCreateUserFunction = { addUser(it) })
         }
     }
