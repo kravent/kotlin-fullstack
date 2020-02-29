@@ -1,5 +1,7 @@
 package component
 
+import component.login.loginInterceptor
+import component.navbar.navBar
 import component.store.storeProvider
 import component.user.userManager
 import react.RBuilder
@@ -11,23 +13,25 @@ import react.router.dom.routeLink
 import react.router.dom.switch
 
 fun RBuilder.app() = storeProvider {
-    browserRouter {
-        switch {
-            route("/", exact = true) {
-                div {
-                    navBar()
-                    h1 { +"Hello" }
-                    routeLink("/users") { +"Users" }
+    loginInterceptor {
+        browserRouter {
+            switch {
+                route("/", exact = true) {
+                    div {
+                        navBar()
+                        h1 { +"Hello" }
+                        routeLink("/users") { +"Users" }
+                    }
                 }
-            }
-            route("/users", exact = true) {
-                div {
-                    navBar()
-                    userManager()
+                route("/users", exact = true) {
+                    div {
+                        navBar()
+                        userManager()
+                    }
                 }
-            }
-            route("*") {
-                h1 { +"ERROR: Page not found" }
+                route("*") {
+                    h1 { +"ERROR: Page not found" }
+                }
             }
         }
     }
