@@ -14,6 +14,7 @@ import react.useState
 import utils.withTarget
 
 data class UserCreatorProps(
+    val disabled: Boolean,
     val onCreateUserFunction: (userName: String) -> Unit
 ) : RProps
 
@@ -22,12 +23,14 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
 
     div {
         input(InputType.text) {
+            attrs.disabled = props.disabled
             attrs.value = userName
             attrs.onChangeFunction = withTarget { userNameInput: HTMLInputElement ->
                 setUserName(userNameInput.value)
             }
         }
         button {
+            attrs.disabled = props.disabled
             attrs.onClickFunction = {
                 if (userName.isNotEmpty()) {
                     props.onCreateUserFunction(userName)
@@ -38,5 +41,7 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
     }
 }
 
-fun RBuilder.userCreator(onCreateUserFunction: (userName: String) -> Unit) =
-    UserCreator.node(UserCreatorProps(onCreateUserFunction))
+fun RBuilder.userCreator(
+    disabled: Boolean,
+    onCreateUserFunction: (userName: String) -> Unit
+) = UserCreator.node(UserCreatorProps(disabled, onCreateUserFunction))
