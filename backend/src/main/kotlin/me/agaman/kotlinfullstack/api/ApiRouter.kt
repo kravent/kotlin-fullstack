@@ -24,12 +24,6 @@ fun Route.apiRouter() {
         apiSerialization()
     }
 
-    install(CORS) {
-        anyHost()
-        allowCredentials = true
-        allowNonSimpleContentTypes = true
-    }
-
     post(ApiRoute.USER_CREATE.path) {
         val request = call.receive<UserCreateRequest>()
         val error = if (userList.contains(request.userName)) {

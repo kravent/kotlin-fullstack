@@ -11,8 +11,6 @@ import io.ktor.http.contentType
 import io.ktor.http.takeFrom
 import me.agaman.kotlinfullstack.route.ApiRoute
 import me.agaman.kotlinfullstack.route.Route
-import org.w3c.dom.get
-import kotlin.browser.sessionStorage
 import kotlin.browser.window
 
 val client = HttpClient(Js) {
@@ -22,7 +20,7 @@ val client = HttpClient(Js) {
 }
 
 fun HttpRequestBuilder.url(apiRoute: ApiRoute) = url {
-    takeFrom(sessionStorage["apiHost"] ?: window.location.href)
+    takeFrom(window.location.href)
     encodedPath = "${Route.API.path}/${apiRoute.path}"
 }
 
