@@ -1,8 +1,7 @@
 package component.store
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
+import me.agaman.kotlinfullstack.Serializer
 import org.w3c.dom.get
 import org.w3c.dom.set
 import react.RBuilder
@@ -12,7 +11,6 @@ import react.redux.provider
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
-import utils.Serializer
 import kotlin.browser.localStorage
 
 private const val LOCAL_STORAGE_KEY = "storeState"
