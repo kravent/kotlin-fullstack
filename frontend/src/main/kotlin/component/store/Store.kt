@@ -12,10 +12,10 @@ import react.redux.provider
 import redux.RAction
 import redux.createStore
 import redux.rEnhancer
+import utils.Serializer
 import kotlin.browser.localStorage
 
 private const val LOCAL_STORAGE_KEY = "storeState"
-private val json = Json(JsonConfiguration.Stable)
 
 @Serializable
 data class StoreState(
@@ -34,11 +34,11 @@ private fun storeReducer(previousState: StoreState, action: RAction) = when (act
 
 private fun loadState(): StoreState =
     localStorage[LOCAL_STORAGE_KEY]
-        ?.let { json.parse(StoreState.serializer(), it) }
+        ?.let { Serializer.json.parse(StoreState.serializer(), it) }
         ?: StoreState()
 
 private fun saveState(state: StoreState) {
-    localStorage[LOCAL_STORAGE_KEY] = json.stringify(StoreState.serializer(), state)
+    localStorage[LOCAL_STORAGE_KEY] = Serializer.json.stringify(StoreState.serializer(), state)
 }
 
 val Store = createStore<StoreState, RAction, dynamic>(

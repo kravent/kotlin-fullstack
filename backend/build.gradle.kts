@@ -1,11 +1,11 @@
-group = "me.agaman.kotlinfullstack"
-version = "1.0-SNAPSHOT"
-
 plugins {
     application
-    kotlin("jvm") version "1.3.61"
-    kotlin("plugin.serialization") version "1.3.61"
+    kotlin("jvm") version "1.3.70"
+    kotlin("plugin.serialization") version "1.3.70"
 }
+
+group = "me.agaman.kotlinfullstack"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -14,11 +14,16 @@ repositories {
 
 dependencies {
     val ktorVersion = "1.3.1"
+    val serializationVersion = "0.20.0"
+
     implementation(kotlin("stdlib-jdk8"))
+    implementation(project(":common"))
+
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serializationVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializationVersion")
     implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation(project(":common"))
 }
 
 tasks {
@@ -29,7 +34,7 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
     processResources {
-        dependsOn(":frontend:browserWebpack")
+        dependsOn(":frontend:browserDevelopmentWebpack") // TODO use production build when needed
     }
 }
 

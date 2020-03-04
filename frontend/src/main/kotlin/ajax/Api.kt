@@ -3,7 +3,6 @@ package ajax
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.http.ContentType
@@ -18,7 +17,7 @@ import kotlin.browser.window
 
 val client = HttpClient(Js) {
     install(JsonFeature) {
-        serializer = KotlinxSerializer()
+        serializer = ApiJsonSerializer()
     }
 }
 
