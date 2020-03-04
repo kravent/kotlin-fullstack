@@ -2,14 +2,15 @@ package me.agaman.kotlinfullstack.api
 
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
+import io.ktor.response.header
 import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.routing.*
 import io.ktor.serialization.serialization
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
@@ -21,6 +22,12 @@ private val userList: MutableSet<String> = mutableSetOf()
 fun Route.apiRouter() {
     install(ContentNegotiation) {
         serialization()
+    }
+
+    install(CORS) {
+        anyHost()
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
 
     post(ApiRoute.USER_CREATE.path) {

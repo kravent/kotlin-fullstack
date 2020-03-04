@@ -29,7 +29,7 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
     processResources {
-        dependsOn(":frontend:build")
+        dependsOn(":frontend:browserWebpack")
     }
 }
 
