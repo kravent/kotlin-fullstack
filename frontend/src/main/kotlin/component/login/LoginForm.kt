@@ -1,5 +1,8 @@
 package component.login
 
+import ajax.Api
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
@@ -20,6 +23,7 @@ interface LoginFormProps : RProps {
 }
 
 interface LoginFormState : RState {
+    var loading: Boolean
     var user: String
     var password: String
     var error: String?
@@ -27,21 +31,34 @@ interface LoginFormState : RState {
 
 class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
     override fun LoginFormState.init() {
+        loading = false
         user = ""
         password = ""
         error = null
     }
 
     private fun doLogin() {
-        if (state.password == "pass") {
-            props.onUserLogged(state.user)
-            setState {
-                user = ""
-                password = ""
-                error = null
+        setState { loading = true }
+        MainScope().launch {
+            try {
+                Api.login(state.user, state.password)
+                props.onUserLogged(state.user)
+                setState {
+                    loading = false
+                    user = ""
+                    password = ""
+                    error = null
+                }
+            } catch (e: Exception) {
+                setState {
+                    loading = false
+                    error = "User not found"
+                }
             }
+        }
+        if (state.password == "pass") {
+
         } else {
-            setState { error = "User not found" }
         }
     }
 
@@ -65,6 +82,7 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                     div {
                         +"Name:"
                         input {
+                            attrs.disabled = state.loading
                             attrs.value = state.user
                             attrs.onChangeFunction = withTarget<HTMLInputElement> {
                                 setState { user = it.value }
@@ -74,6 +92,7 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                     div {
                         +"Password:"
                         input {
+                            attrs.disabled = state.loading
                             attrs.type = InputType.password
                             attrs.value = state.password
                             attrs.onChangeFunction = withTarget<HTMLInputElement> {
@@ -83,6 +102,7 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                     }
                     styledButton {
                         css { float = Float.left }
+                        attrs.disabled = state.loading
                         attrs.type = ButtonType.submit
                         +"Login"
                     }

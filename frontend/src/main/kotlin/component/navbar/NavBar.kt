@@ -1,7 +1,10 @@
 package component.navbar
 
+import ajax.Api
 import component.store.LogoutStoreAction
 import component.store.StoreState
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.*
@@ -28,6 +31,13 @@ data class NavBarProps(
 ) : RProps
 
 val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
+    fun doLogout() {
+        MainScope().launch {
+            Api.logout()
+            props.onLogout()
+        }
+    }
+
     styledDiv {
         css {
             borderBottomStyle = BorderStyle.solid
@@ -39,7 +49,7 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
                 css { float = Float.right }
 
                 button {
-                    attrs.onClickFunction = { props.onLogout() }
+                    attrs.onClickFunction = { doLogout() }
                     +"Logout (${props.userName})"
                 }
             }
