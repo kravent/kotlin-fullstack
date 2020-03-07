@@ -7,7 +7,7 @@ import io.ktor.auth.*
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
-import io.ktor.http.ContentType
+import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
@@ -18,9 +18,9 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.sessions.Sessions
+import kotlinx.html.*
 import me.agaman.kotlinfullstack.api.apiRouter
 import me.agaman.kotlinfullstack.features.*
-import me.agaman.kotlinfullstack.route.ApiRoute
 import me.agaman.kotlinfullstack.route.Route
 import me.agaman.kotlinfullstack.utils.isDevEnvironment
 
@@ -54,19 +54,19 @@ fun Application.module() {
     }
 
     install(Routing) {
-        route(Route.API.path) {
-            authenticate {
-                post(ApiRoute.LOGIN.path) {
-                    val currentUser = call.principal<UserIdPrincipal>() ?: error ("No auth found")
-                    call.setApiSession(ApiSession(currentUserName = currentUser.name))
-                    call.respondText { call.getCsrfToken() }
-                }
+        authenticate {
+            post(Route.LOGIN.path) {
+                val currentUser = call.principal<UserIdPrincipal>() ?: error("No auth found")
+                call.setApiSession(ApiSession(currentUserName = currentUser.name))
+                call.respondText { call.getCsrfToken() }
+            }
 
-                post(ApiRoute.LOGOUT.path) {
-                    call.deleteApiSession()
-                    call.respondText { call.getCsrfToken() }
-                }
+            post(Route.LOGOUT.path) {
+                call.deleteApiSession()
+                call.respondText { call.getCsrfToken() }
+            }
 
+            route(Route.API.path) {
                 apiRouter()
             }
         }
@@ -76,21 +76,23 @@ fun Application.module() {
         }
 
         get("{...}") {
-            call.respondText(ContentType.Text.Html) {
-                """
-                    <!doctype html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>Kotlin fullstack</title>
-                    </head>
-                    <body>
-                        <input id="_csrf_token" type="hidden" value="${call.getCsrfToken()}" />
-                        <div id="root"></div>
-                        <script src="/static/app.js"></script>
-                    </body>
-                    </html>
-                """.trimIndent()
+            val csrfToken = call.getCsrfToken()
+            call.respondHtml {
+                head {
+                    meta { charset = Charsets.UTF_8.name() }
+                    title { +"Kotlin fullstack" }
+                }
+                body {
+                    hiddenInput {
+                        id = "_csrf_token"
+                        value = csrfToken
+                    }
+                    div { id = "root" }
+                    script {
+                        type = ScriptType.textJavaScript
+                        src = "/static/app.js"
+                    }
+                }
             }
         }
     }

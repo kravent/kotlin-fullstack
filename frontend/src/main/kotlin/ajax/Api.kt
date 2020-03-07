@@ -24,10 +24,12 @@ val client = HttpClient(Js) {
     }
 }
 
-fun HttpRequestBuilder.url(apiRoute: ApiRoute) = url {
+fun HttpRequestBuilder.localUrl(path: String) = url {
     takeFrom(window.location.href)
-    encodedPath = "${Route.API.path}/${apiRoute.path}"
+    encodedPath = path
 }
+fun HttpRequestBuilder.localUrl(route: Route) = localUrl(route.path)
+fun HttpRequestBuilder.localUrl(apiRoute: ApiRoute) = localUrl("${Route.API.path}/${apiRoute.path}")
 
 suspend inline fun <reified T> apiRequest(block: HttpRequestBuilder.() -> Unit): T =
     try {
@@ -55,7 +57,7 @@ object Api {
     suspend fun login(user: String, password: String) {
         val csrfToken = apiRequest<String> {
             method = HttpMethod.Post
-            url(ApiRoute.LOGIN)
+            localUrl(Route.LOGIN)
             body = FormDataContent(Parameters.build {
                 set("user", user)
                 set("password", password)
@@ -67,25 +69,25 @@ object Api {
     suspend fun logout() {
         val csrfToken = apiRequest<String> {
             method = HttpMethod.Post
-            url(ApiRoute.LOGOUT)
+            localUrl(Route.LOGOUT)
         }
         CsrfTokenHandler.setToken(csrfToken)
     }
 
     suspend inline fun <reified T> get(apiRoute: ApiRoute): T = apiRequest {
         method = HttpMethod.Get
-        url(apiRoute)
+        localUrl(apiRoute)
     }
 
     suspend inline fun <reified T> rawPost(apiRoute: ApiRoute, noinline block: FormBuilder.() -> Unit): T = apiRequest {
         method = HttpMethod.Post
-        url(apiRoute)
+        localUrl(apiRoute)
         formData(block)
     }
 
     suspend inline fun <reified T> post(apiRoute: ApiRoute, data: Any): T = apiRequest {
         method = HttpMethod.Post
-        url(apiRoute)
+        localUrl(apiRoute)
         contentType(ContentType.Application.Json)
         body = data
     }
