@@ -1,20 +1,17 @@
 package component.login
 
 import ajax.Api
+import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.button.MButtonVariant
+import com.ccfraser.muirwik.components.button.mButton
+import com.ccfraser.muirwik.components.form.MFormControlVariant
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
-import kotlinx.html.ButtonType
 import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.div
-import react.dom.form
-import react.dom.input
 import styled.css
-import styled.styledButton
 import styled.styledDiv
 import utils.withTarget
 
@@ -56,61 +53,75 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                 }
             }
         }
-        if (state.password == "pass") {
-
-        } else {
-        }
     }
 
     override fun RBuilder.render() {
-        form {
-            attrs.onSubmitFunction = {
-                it.preventDefault()
-                doLogin()
+        mGridContainer {
+            attrs {
+                justify = MGridJustify.center
+                alignItems = MGridAlignItems.center
             }
 
-            styledDiv {
-                css { textAlign = TextAlign.center }
-                styledDiv {
-                    css { textAlign = TextAlign.left }
-                    state.error?.let {
-                        styledDiv {
-                            css { color = Color.red }
-                            +it
-                        }
+            mGridItem(xs = MGridSize.cells4) {
+                mPaper {
+                    css {
+                        padding(all = 50.px)
                     }
-                    div {
-                        +"Name:"
-                        input {
-                            attrs.disabled = state.loading
-                            attrs.value = state.user
-                            attrs.onChangeFunction = withTarget<HTMLInputElement> {
-                                setState { user = it.value }
+
+                    mGridContainer {
+                        attrs.direction = MGridDirection.column
+
+                        mGridItem {
+                            mTextField(
+                                label = "User",
+                                fullWidth = true,
+                                variant = MFormControlVariant.outlined,
+                                value = state.user,
+                                disabled = state.loading,
+                                error = state.error != null,
+                                onChange = withTarget<HTMLInputElement> { setState { user = it.value } }
+                            ) {
+                                attrs.onKeyPress = { if (it.key == "Enter") doLogin() }
                             }
                         }
-                    }
-                    div {
-                        +"Password:"
-                        input {
-                            attrs.disabled = state.loading
-                            attrs.type = InputType.password
-                            attrs.value = state.password
-                            attrs.onChangeFunction = withTarget<HTMLInputElement> {
-                                setState { password = it.value }
+
+                        mGridItem {
+                            mTextField(
+                                label = "Password",
+                                fullWidth = true,
+                                variant = MFormControlVariant.outlined,
+                                type = InputType.password,
+                                value = state.password,
+                                disabled = state.loading,
+                                error = state.error != null,
+                                helperText = state.error,
+                                onChange = withTarget<HTMLInputElement> { setState { password = it.value } }
+                            ) {
+                                attrs.onKeyPress = { if (it.key == "Enter") doLogin() }
                             }
                         }
-                    }
-                    styledButton {
-                        css { float = Float.left }
-                        attrs.disabled = state.loading
-                        attrs.type = ButtonType.submit
-                        +"Login"
+
+                        mGridItem {
+                            styledDiv {
+                                css {
+                                    marginTop = 16.px
+                                    marginBottom = 8.px
+                                    textAlign = TextAlign.right
+                                }
+                                mButton(
+                                    caption = "Login",
+                                    variant = MButtonVariant.contained,
+                                    color = MColor.primary,
+                                    onClick = { doLogin() }
+                                )
+                            }
+
+                        }
                     }
                 }
             }
         }
     }
-
 }
 
 fun RBuilder.loginForm(onUserLogged: (userName: String) -> Unit) = child(LoginForm::class) {

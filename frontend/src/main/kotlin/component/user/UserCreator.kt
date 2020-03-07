@@ -1,14 +1,13 @@
 package component.user
 
-import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onClickFunction
+import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.button.MButtonSize
+import com.ccfraser.muirwik.components.button.MButtonVariant
+import com.ccfraser.muirwik.components.button.mButton
+import com.ccfraser.muirwik.components.form.MFormControlVariant
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.RProps
-import react.dom.button
-import react.dom.div
-import react.dom.input
 import react.rFunction
 import react.useState
 import utils.withTarget
@@ -21,22 +20,36 @@ data class UserCreatorProps(
 val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
     val (userName, setUserName) = useState("")
 
-    div {
-        input(InputType.text) {
-            attrs.disabled = props.disabled
-            attrs.value = userName
-            attrs.onChangeFunction = withTarget { userNameInput: HTMLInputElement ->
-                setUserName(userNameInput.value)
+    fun sendUser() {
+        if (userName.isNotEmpty()) {
+            props.onCreateUserFunction(userName)
+        }
+    }
+
+    mGridContainer {
+        attrs.direction = MGridDirection.row
+        attrs.spacing = MGridSpacing.spacing8
+
+        mGridItem {
+            mTextField(
+                label = "New user",
+                variant = MFormControlVariant.filled,
+                value = userName,
+                disabled = props.disabled,
+                onChange = withTarget<HTMLInputElement>{ setUserName(it.value) }
+            ) {
+                attrs.onKeyPress = { if (it.key == "Enter") sendUser() }
             }
         }
-        button {
-            attrs.disabled = props.disabled
-            attrs.onClickFunction = {
-                if (userName.isNotEmpty()) {
-                    props.onCreateUserFunction(userName)
-                }
-            }
-            +"Add"
+        mGridItem {
+            mButton(
+                caption = "Add",
+                variant = MButtonVariant.contained,
+                size = MButtonSize.large,
+                disabled = props.disabled,
+                color = MColor.secondary,
+                onClick = { sendUser() }
+            )
         }
     }
 }

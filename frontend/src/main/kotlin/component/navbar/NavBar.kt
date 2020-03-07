@@ -1,21 +1,18 @@
 package component.navbar
 
 import ajax.Api
+import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.button.mButton
 import component.store.LogoutStoreAction
 import component.store.StoreState
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.css.*
-import kotlinx.html.js.onClickFunction
+import kotlinx.css.flexGrow
 import react.*
-import react.dom.button
-import react.dom.h1
 import react.redux.rConnect
-import react.router.dom.routeLink
 import redux.RAction
 import redux.WrapperAction
 import styled.css
-import styled.styledDiv
 
 interface NavBarStateProps : RProps {
     var userName: String?
@@ -38,7 +35,17 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
         }
     }
 
-    styledDiv {
+    mAppBar(position = MAppBarPosition.static) {
+        mToolbar {
+            mTypography(variant = MTypographyVariant.h6) {
+                css { flexGrow = 1.0 }
+                +"Home"
+            }
+            mButton(caption = "Logout (${props.userName})", color = MColor.inherit, onClick = { doLogout() })
+        }
+    }
+
+    /*styledDiv {
         css {
             borderBottomStyle = BorderStyle.solid
             borderWidth = 4.px
@@ -58,7 +65,7 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
         h1 {
             routeLink("/") { +"Home" }
         }
-    }
+    }*/
 }
 
 val NavBarConnector =

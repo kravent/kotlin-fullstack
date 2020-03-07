@@ -80,6 +80,14 @@ fun Application.module() {
             call.respondHtml {
                 head {
                     meta { charset = Charsets.UTF_8.name() }
+                    link {
+                        rel = LinkRel.stylesheet
+                        href = "https://fonts.googleapis.com/css?family=Roboto:300,400,500"
+                    }
+                    link {
+                        rel = LinkRel.stylesheet
+                        href = "https://fonts.googleapis.com/icon?family=Material+Icons"
+                    }
                     title { +"Kotlin fullstack" }
                 }
                 body {

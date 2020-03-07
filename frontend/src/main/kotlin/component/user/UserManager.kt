@@ -1,19 +1,18 @@
 package component.user
 
 import ajax.Api
+import com.ccfraser.muirwik.components.MTypographyColor
+import com.ccfraser.muirwik.components.button.mButton
+import com.ccfraser.muirwik.components.mCircularProgress
+import com.ccfraser.muirwik.components.mTypography
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.css.Color
-import kotlinx.css.color
-import kotlinx.html.js.onClickFunction
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
 import me.agaman.kotlinfullstack.route.ApiRoute
 import react.*
-import react.dom.button
-import styled.css
-import styled.styledDiv
 
 private data class UserManagerState(
     val loading: Boolean = true,
@@ -38,9 +37,9 @@ private fun stateReducer(state: UserManagerState, event: UserManagerEvent): User
 val UserManager = rFunction("UserManager") { _: RProps ->
     val (state, onStateEvent) = useReducer(::stateReducer, UserManagerState())
 
-    fun reloadUsers() {
+    fun reloadUsers(): Job {
         onStateEvent(UserManagerEvent.Loading)
-        MainScope().launch {
+        return MainScope().launch {
             try {
                 val response = Api.get<UserListResponse>(ApiRoute.USERS_LIST)
                 onStateEvent(UserManagerEvent.UsersList(response))
@@ -50,9 +49,9 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         }
     }
 
-    fun addUser(userName: String) {
+    fun addUser(userName: String): Job {
         onStateEvent(UserManagerEvent.Loading)
-        MainScope().launch {
+        return MainScope().launch {
             try {
                 val response = Api.post<UserCreateResponse>(ApiRoute.USER_CREATE, UserCreateRequest(userName))
                 onStateEvent(UserManagerEvent.UserCreate(response))
@@ -62,22 +61,17 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         }
     }
 
-    useEffect(listOf()) {
-        reloadUsers()
+    useEffectWithCleanup(listOf()) {
+        val job = reloadUsers()
+        return@useEffectWithCleanup { job.cancel() }
     }
 
     if (state.loading) {
-        styledDiv {
-            css { color = Color.indigo }
-            +"Loading..."
-        }
+        mCircularProgress()
     }
     state.users?.also { userList(it) }
     state.error?.also {
-        styledDiv {
-            css { color = Color.red }
-            +it
-        }
+        mTypography(color = MTypographyColor.error) { +it }
     }
     if (state.users != null) {
         userCreator(
@@ -85,10 +79,10 @@ val UserManager = rFunction("UserManager") { _: RProps ->
             onCreateUserFunction = { addUser(it) }
         )
     } else if (!state.loading) {
-        button {
-            attrs.onClickFunction = { reloadUsers() }
-            +"Reload"
-        }
+        mButton(
+            caption = "Reload",
+            onClick = { reloadUsers() }
+        )
     }
 }
 

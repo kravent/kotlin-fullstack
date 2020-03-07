@@ -1,9 +1,9 @@
 package component.user
 
+import com.ccfraser.muirwik.components.list.mList
+import com.ccfraser.muirwik.components.list.mListItemWithIcon
 import react.RBuilder
 import react.RProps
-import react.dom.li
-import react.dom.ul
 import react.rFunction
 
 data class UserListProps(
@@ -11,9 +11,9 @@ data class UserListProps(
 ) : RProps
 
 val UserList = rFunction("UserList") { props: UserListProps ->
-    ul {
+    mList {
         props.userList.forEach {
-            li { +it }
+            mListItemWithIcon(iconName = "person", primaryText = it)
         }
     }
 }
