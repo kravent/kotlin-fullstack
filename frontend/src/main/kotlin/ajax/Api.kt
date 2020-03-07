@@ -10,10 +10,12 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.FormBuilder
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.forms.formData
+import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.http.*
 import me.agaman.kotlinfullstack.route.ApiRoute
 import me.agaman.kotlinfullstack.route.Route
+import utils.CsrfTokenHandler
 import kotlin.browser.window
 
 val client = HttpClient(Js) {
@@ -29,10 +31,21 @@ fun HttpRequestBuilder.url(apiRoute: ApiRoute) = url {
 
 suspend inline fun <reified T> apiRequest(block: HttpRequestBuilder.() -> Unit): T =
     try {
-        client.request(block)
+        client.request {
+            block()
+            if (method != HttpMethod.Get) {
+                header("X-CSRF", CsrfTokenHandler.getToken())
+            }
+        }
     } catch (e: Exception) {
-        if (e is ClientRequestException && e.response.status == HttpStatusCode.Unauthorized) {
-            Store.dispatch(LogoutStoreAction)
+        if (e is ClientRequestException) {
+            when (e.response.status) {
+                HttpStatusCode.Unauthorized -> Store.dispatch(LogoutStoreAction)
+                HttpStatusCode.Forbidden -> {
+                    console.error("Error in CSRF check. Forcing window reload.")
+                    window.location.reload()
+                }
+            }
         }
         console.error(e)
         throw e
@@ -40,7 +53,7 @@ suspend inline fun <reified T> apiRequest(block: HttpRequestBuilder.() -> Unit):
 
 object Api {
     suspend fun login(user: String, password: String) {
-        apiRequest<String> {
+        val csrfToken = apiRequest<String> {
             method = HttpMethod.Post
             url(ApiRoute.LOGIN)
             body = FormDataContent(Parameters.build {
@@ -48,13 +61,15 @@ object Api {
                 set("password", password)
             })
         }
+        CsrfTokenHandler.setToken(csrfToken)
     }
 
     suspend fun logout() {
-        apiRequest<String> {
+        val csrfToken = apiRequest<String> {
             method = HttpMethod.Post
             url(ApiRoute.LOGOUT)
         }
+        CsrfTokenHandler.setToken(csrfToken)
     }
 
     suspend inline fun <reified T> get(apiRoute: ApiRoute): T = apiRequest {
@@ -71,7 +86,7 @@ object Api {
     suspend inline fun <reified T> post(apiRoute: ApiRoute, data: Any): T = apiRequest {
         method = HttpMethod.Post
         url(apiRoute)
-        body = data
         contentType(ContentType.Application.Json)
+        body = data
     }
 }

@@ -1,4 +1,4 @@
-package me.agaman.kotlinfullstack.api.utils
+package me.agaman.kotlinfullstack.features
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
