@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-
 plugins {
     kotlin("js") version "1.3.70"
     kotlin("plugin.serialization") version "1.3.70"
@@ -15,30 +13,35 @@ repositories {
 }
 
 dependencies {
+    val kotlinWrapperVersion = "pre.93-kotlin-1.3.70"
+    val reactVersion = "16.13.0"
+    val reactRouterVersion = "4.3.1"
+    val reduxVersion = "4.0.0"
+    val reactReduxVersion = "5.0.7"
     val ktorVersion = "1.3.1"
     val serializationVersion = "0.20.0"
 
     implementation(kotlin("stdlib-js"))
     implementation(project(":common"))
 
-    //React, React DOM, React Router DOM + Wrappers
-    implementation("org.jetbrains:kotlin-react:16.9.0-pre.91-kotlin-1.3.61")
-    implementation("org.jetbrains:kotlin-react-dom:16.9.0-pre.91-kotlin-1.3.61")
-    implementation("org.jetbrains:kotlin-react-router-dom:4.3.1-pre.91-kotlin-1.3.61")
-    implementation("org.jetbrains:kotlin-redux:4.0.0-pre.91-kotlin-1.3.61")
-    implementation("org.jetbrains:kotlin-react-redux:5.0.7-pre.91-kotlin-1.3.61")
-    implementation(npm("react", "16.12.0"))
-    implementation(npm("react-dom", "16.12.0"))
-    implementation(npm("react-router-dom", "4.3.1"))
-    implementation(npm("redux", "4.0.0"))
-    implementation(npm("react-redux", "5.0.7"))
+    // React, React DOM, React Router DOM + Wrappers
+    implementation("org.jetbrains:kotlin-react:$reactVersion-$kotlinWrapperVersion")
+    implementation("org.jetbrains:kotlin-react-dom:$reactVersion-$kotlinWrapperVersion")
+    implementation("org.jetbrains:kotlin-react-router-dom:$reactRouterVersion-$kotlinWrapperVersion")
+    implementation("org.jetbrains:kotlin-redux:$reduxVersion-$kotlinWrapperVersion")
+    implementation("org.jetbrains:kotlin-react-redux:$reactReduxVersion-$kotlinWrapperVersion")
+    implementation(npm("react", reactVersion))
+    implementation(npm("react-dom", reactVersion))
+    implementation(npm("react-router-dom", reactRouterVersion))
+    implementation(npm("redux", reduxVersion))
+    implementation(npm("react-redux", reactReduxVersion))
 
-    //Kotlin Styled
-    implementation("org.jetbrains:kotlin-styled:1.0.0-pre.90-kotlin-1.3.61")
+    // Kotlin Styled
+    implementation("org.jetbrains:kotlin-styled:1.0.0-$kotlinWrapperVersion")
     implementation(npm("styled-components"))
     implementation(npm("inline-style-prefixer"))
 
-    //Coroutines
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.3")
 
     // Ajax calls
