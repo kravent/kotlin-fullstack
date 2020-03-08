@@ -1,12 +1,13 @@
 package component.user
 
 import ajax.Api
-import com.ccfraser.muirwik.components.MTypographyColor
+import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.mButton
-import com.ccfraser.muirwik.components.mCircularProgress
-import com.ccfraser.muirwik.components.mTypography
+import component.materialui.MAlertSeverity
+import component.materialui.mAlert
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
@@ -42,6 +43,7 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         return MainScope().launch {
             try {
                 val response = Api.get<UserListResponse>(ApiRoute.USERS_LIST)
+                delay(2000) // TODO Remove artificial delay added to check loading page
                 onStateEvent(UserManagerEvent.UsersList(response))
             } catch (e: Exception) {
                 onStateEvent(UserManagerEvent.Error("Error loading users"))
@@ -54,6 +56,7 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         return MainScope().launch {
             try {
                 val response = Api.post<UserCreateResponse>(ApiRoute.USER_CREATE, UserCreateRequest(userName))
+                delay(2000) // TODO Remove artificial delay added to check loading page
                 onStateEvent(UserManagerEvent.UserCreate(response))
             } catch (e: Exception) {
                 onStateEvent(UserManagerEvent.Error("Error creating user"))
@@ -66,23 +69,39 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         return@useEffectWithCleanup { job.cancel() }
     }
 
-    if (state.loading) {
-        mCircularProgress()
-    }
-    state.users?.also { userList(it) }
-    state.error?.also {
-        mTypography(color = MTypographyColor.error) { +it }
-    }
-    if (state.users != null) {
-        userCreator(
-            disabled = state.loading,
-            onCreateUserFunction = { addUser(it) }
-        )
-    } else if (!state.loading) {
-        mButton(
-            caption = "Reload",
-            onClick = { reloadUsers() }
-        )
+    mGridContainer {
+        attrs {
+            spacing = MGridSpacing.spacing4
+        }
+
+        state.users?.also {
+            mGridItem(lg = MGridSize.cells12) {
+                userList(it)
+            }
+        }
+        state.error?.also {
+            mGridItem(lg = MGridSize.cells12) {
+                mAlert(text = it, severity = MAlertSeverity.error)
+            }
+        }
+        mGridItem(lg = MGridSize.cells6) {
+            if (state.users != null) {
+                userCreator(
+                    disabled = state.loading,
+                    onCreateUserFunction = { addUser(it) }
+                )
+            } else if (!state.loading) {
+                mButton(
+                    caption = "Reload",
+                    onClick = { reloadUsers() }
+                )
+            }
+        }
+        if (state.loading) {
+            mGridItem(lg = MGridSize.cells1) {
+                mCircularProgress()
+            }
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import ajax.ApiUnauthoridedException
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.MButtonVariant
 import com.ccfraser.muirwik.components.button.mButton
+import com.ccfraser.muirwik.components.form.MFormControlMargin
 import com.ccfraser.muirwik.components.form.MFormControlVariant
 import component.materialui.MAlertSeverity
 import component.materialui.mAlert
@@ -21,11 +22,11 @@ import react.useState
 import styled.css
 import utils.withTarget
 
-data class LoginFormProps(
+data class LoginPageProps(
     val onUserLogged: (userName: String) -> Unit
 ) : RProps
 
-val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
+val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
     val (loading, setLoading) = useState(false)
     val (user, setUser) = useState("")
     val (password, setPassword) = useState("")
@@ -61,11 +62,15 @@ val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
         mGridItem(xs = MGridSize.cells4) {
             mPaper {
                 css {
+                    marginTop = 50.px
                     padding(all = 50.px)
                 }
 
                 mGridContainer {
-                    attrs.direction = MGridDirection.column
+                    attrs {
+                        direction = MGridDirection.column
+                        spacing = MGridSpacing.spacing6
+                    }
 
                     if (error != null) {
                         mGridItem {
@@ -77,6 +82,7 @@ val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
                         mTextField(
                             label = "User",
                             fullWidth = true,
+                            margin = MFormControlMargin.none,
                             variant = MFormControlVariant.outlined,
                             value = user,
                             disabled = loading,
@@ -91,6 +97,7 @@ val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
                         mTextField(
                             label = "Password",
                             fullWidth = true,
+                            margin = MFormControlMargin.none,
                             variant = MFormControlVariant.outlined,
                             type = InputType.password,
                             value = password,
@@ -104,8 +111,6 @@ val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
 
                     mGridItem {
                         css {
-                            paddingTop = 16.px
-                            paddingBottom = 8.px
                             textAlign = TextAlign.right
                         }
                         mButton(
@@ -121,4 +126,4 @@ val LoginForm = rFunction("LoginForm") { props: LoginFormProps ->
     }
 }
 
-fun RBuilder.loginForm(onUserLogged: (userName: String) -> Unit) = child(LoginForm, LoginFormProps(onUserLogged)) {}
+fun RBuilder.loginPage(onUserLogged: (userName: String) -> Unit) = child(LoginPage, LoginPageProps(onUserLogged)) {}

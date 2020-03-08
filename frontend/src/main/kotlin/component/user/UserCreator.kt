@@ -4,6 +4,7 @@ import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.MButtonSize
 import com.ccfraser.muirwik.components.button.MButtonVariant
 import com.ccfraser.muirwik.components.button.mButton
+import com.ccfraser.muirwik.components.form.MFormControlMargin
 import com.ccfraser.muirwik.components.form.MFormControlVariant
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
@@ -28,12 +29,14 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
 
     mGridContainer {
         attrs.direction = MGridDirection.row
+        attrs.alignItems = MGridAlignItems.center
         attrs.spacing = MGridSpacing.spacing8
 
         mGridItem {
             mTextField(
                 label = "New user",
                 variant = MFormControlVariant.filled,
+                margin = MFormControlMargin.none,
                 value = userName,
                 disabled = props.disabled,
                 onChange = withTarget<HTMLInputElement>{ setUserName(it.value) }
@@ -57,4 +60,4 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
 fun RBuilder.userCreator(
     disabled: Boolean,
     onCreateUserFunction: (userName: String) -> Unit
-) = UserCreator.node(UserCreatorProps(disabled, onCreateUserFunction))
+) = child(UserCreator, UserCreatorProps(disabled, onCreateUserFunction)) {}

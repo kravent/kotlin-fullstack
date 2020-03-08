@@ -24,7 +24,7 @@ val LoginInterceptor = rFunction("LoginInterceptor") { props: LoginInterceptorPr
     if (props.isLogged) {
         props.children()
     } else {
-        loginForm(onUserLogged = { props.onLogin(it) })
+        loginPage(onUserLogged = { props.onLogin(it) })
     }
 }
 
