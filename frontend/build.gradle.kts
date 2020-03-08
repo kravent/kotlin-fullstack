@@ -38,8 +38,8 @@ dependencies {
 
     // Kotlin Styled
     implementation("org.jetbrains:kotlin-styled:1.0.0-$kotlinWrapperVersion")
-    implementation(npm("styled-components"))
-    implementation(npm("inline-style-prefixer"))
+    implementation(npm("styled-components", "^4.4.1"))
+    implementation(npm("inline-style-prefixer", "^5.1.2"))
 
     // Material UI
     implementation("com.ccfraser.muirwik:muirwik-components:0.4.1")
