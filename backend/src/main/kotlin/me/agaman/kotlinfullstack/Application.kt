@@ -22,7 +22,6 @@ import kotlinx.html.*
 import me.agaman.kotlinfullstack.api.apiRouter
 import me.agaman.kotlinfullstack.features.*
 import me.agaman.kotlinfullstack.route.Route
-import me.agaman.kotlinfullstack.utils.isDevEnvironment
 
 fun Application.module() {
     install(DefaultHeaders)
@@ -34,11 +33,7 @@ fun Application.module() {
         apiSessionsCookie()
     }
     install(Csrf) {
-        validator { request ->
-            request.headers["X-CSRF"].let {
-                it == request.call.getCsrfToken() || (isDevEnvironment && it == "webpack-dev-server-fake-csrf-token")
-            }
-        }
+        validateHeader("X-CSRF") { it.call.getCsrfToken() }
     }
     install(Authentication) {
         form {

@@ -68,6 +68,17 @@ kotlin {
     target {
         useCommonJs()
         browser {
+            runTask {
+                outputFileName = "static/app.js"
+                devServer = devServer?.copy(
+                    open = false,
+                    proxy = mapOf<String, Any>(
+                        "/api" to "http://localhost:8000",
+                        "/static" to { null },
+                        "/" to "http://localhost:8000"
+                    )
+                )
+            }
             webpackTask {
                 outputFileName = "static/app.js"
             }
