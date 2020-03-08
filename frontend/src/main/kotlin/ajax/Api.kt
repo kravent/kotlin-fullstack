@@ -5,6 +5,7 @@ import component.store.Store
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.features.ClientRequestException
+import io.ktor.client.features.ResponseException
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.FormBuilder
@@ -12,6 +13,7 @@ import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.header
 import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
 import me.agaman.kotlinfullstack.route.ApiRoute
 import me.agaman.kotlinfullstack.route.Route
@@ -23,6 +25,9 @@ val client = HttpClient(Js) {
         serializer = ApiJsonSerializer()
     }
 }
+
+class ApiUnauthoridedException(response: HttpResponse) : ResponseException(response)
+class ApiForbiddenException(response: HttpResponse) : ResponseException(response)
 
 fun HttpRequestBuilder.localUrl(path: String) = url {
     takeFrom(window.location.href)
@@ -40,16 +45,19 @@ suspend inline fun <reified T> apiRequest(block: HttpRequestBuilder.() -> Unit):
             }
         }
     } catch (e: Exception) {
+        console.error(e)
         if (e is ClientRequestException) {
             when (e.response.status) {
-                HttpStatusCode.Unauthorized -> Store.dispatch(LogoutStoreAction)
+                HttpStatusCode.Unauthorized -> {
+                    Store.dispatch(LogoutStoreAction)
+                    throw ApiUnauthoridedException(e.response)
+                }
                 HttpStatusCode.Forbidden -> {
-                    console.error("Error in CSRF check. Forcing window reload.")
-                    window.location.reload()
+                    // TODO show alert asking the user to reload the window
+                    throw ApiUnauthoridedException(e.response)
                 }
             }
         }
-        console.error(e)
         throw e
     }
 

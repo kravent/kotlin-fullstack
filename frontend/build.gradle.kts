@@ -45,6 +45,7 @@ dependencies {
     implementation("com.ccfraser.muirwik:muirwik-components:0.4.1")
     implementation(npm("@material-ui/core", "^4.8.3"))
     implementation(npm("@material-ui/icons", "^4.5.1"))
+    implementation(npm("@material-ui/lab", "^4.0.0-alpha.45"))
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.3")

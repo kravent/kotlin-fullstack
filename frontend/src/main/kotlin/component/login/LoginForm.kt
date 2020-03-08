@@ -1,10 +1,14 @@
 package component.login
 
 import ajax.Api
+import ajax.ApiForbiddenException
+import ajax.ApiUnauthoridedException
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.MButtonVariant
 import com.ccfraser.muirwik.components.button.mButton
 import com.ccfraser.muirwik.components.form.MFormControlVariant
+import component.materialui.MAlertSeverity
+import component.materialui.mAlert
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
@@ -41,16 +45,18 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                 Api.login(state.user, state.password)
                 props.onUserLogged(state.user)
                 setState {
-                    loading = false
                     user = ""
                     password = ""
                     error = null
                 }
+            } catch (e: ApiUnauthoridedException) {
+                setState { error = "User not found" }
+            } catch (e: ApiForbiddenException) {
+                setState { error = "CSRF token check error" }
             } catch (e: Exception) {
-                setState {
-                    loading = false
-                    error = "User not found"
-                }
+                setState { error = "Ooops! Something went wrong" }
+            } finally {
+                setState { loading = false }
             }
         }
     }
@@ -70,6 +76,12 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
 
                     mGridContainer {
                         attrs.direction = MGridDirection.column
+
+                        if (state.error != null) {
+                            mGridItem {
+                                mAlert(text = state.error, severity = MAlertSeverity.error)
+                            }
+                        }
 
                         mGridItem {
                             mTextField(
@@ -94,7 +106,6 @@ class LoginForm : RComponent<LoginFormProps, LoginFormState>() {
                                 value = state.password,
                                 disabled = state.loading,
                                 error = state.error != null,
-                                helperText = state.error,
                                 onChange = withTarget<HTMLInputElement> { setState { password = it.value } }
                             ) {
                                 attrs.onKeyPress = { if (it.key == "Enter") doLogin() }
