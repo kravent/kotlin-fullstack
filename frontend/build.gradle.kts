@@ -10,6 +10,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
+    maven("https://dl.bintray.com/subroh0508/maven")
 }
 
 dependencies {
@@ -42,7 +43,7 @@ dependencies {
     implementation(npm("inline-style-prefixer", "^5.1.2"))
 
     // Material UI
-    implementation("com.ccfraser.muirwik:muirwik-components:0.4.1")
+    implementation("subroh0508.net.kotlinmaterialui:core:0.3.0")
     implementation(npm("@material-ui/core", "^4.8.3"))
     implementation(npm("@material-ui/icons", "^4.5.1"))
     implementation(npm("@material-ui/lab", "^4.0.0-alpha.45"))

@@ -1,14 +1,16 @@
 package component.user
 
 import ajax.Api
-import com.ccfraser.muirwik.components.*
-import com.ccfraser.muirwik.components.button.mButton
-import component.materialui.MAlertSeverity
-import component.materialui.mAlert
+import component.materialui.AlertSeverity
+import component.materialui.alert
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.html.js.onClickFunction
+import materialui.components.button.button
+import materialui.components.circularprogress.circularProgress
+import materialui.components.grid.grid
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
@@ -69,37 +71,64 @@ val UserManager = rFunction("UserManager") { _: RProps ->
         return@useEffectWithCleanup { job.cancel() }
     }
 
-    mGridContainer {
+    grid {
         attrs {
-            spacing = MGridSpacing.spacing4
+            container = true
+            spacing(4)
         }
 
         state.users?.also {
-            mGridItem(lg = MGridSize.cells12) {
+            grid {
+                attrs {
+                    item = true
+                    lg(12)
+                }
+                userList(it)
+            }
+            grid {
+                attrs {
+                    item = true
+                    lg(12)
+                }
                 userList(it)
             }
         }
-        state.error?.also {
-            mGridItem(lg = MGridSize.cells12) {
-                mAlert(text = it, severity = MAlertSeverity.error)
+        state.error?.also { errorText ->
+            grid {
+                attrs {
+                    item = true
+                    lg(12)
+                }
+                alert {
+                    attrs.severity = AlertSeverity.error
+                    +errorText
+                }
             }
         }
-        mGridItem(lg = MGridSize.cells6) {
+        grid {
+            attrs {
+                item = true
+                lg(6)
+            }
             if (state.users != null) {
                 userCreator(
                     disabled = state.loading,
                     onCreateUserFunction = { addUser(it) }
                 )
             } else if (!state.loading) {
-                mButton(
-                    caption = "Reload",
-                    onClick = { reloadUsers() }
-                )
+                button {
+                    attrs.onClickFunction = { reloadUsers() }
+                }
+                +"Reload"
             }
         }
         if (state.loading) {
-            mGridItem(lg = MGridSize.cells1) {
-                mCircularProgress()
+            grid {
+                attrs {
+                    item = true
+                    lg(1)
+                }
+                circularProgress {}
             }
         }
     }

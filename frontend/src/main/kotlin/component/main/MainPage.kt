@@ -1,6 +1,6 @@
 package component.main
 
-import com.ccfraser.muirwik.components.*
+import materialui.components.grid.grid
 import react.RBuilder
 import react.RHandler
 import react.RProps
@@ -12,15 +12,24 @@ interface MainPageProps : RProps {
 }
 
 val MainPage = rFunction("MainPage") { props: MainPageProps ->
-    mGridContainer {
+    grid {
         attrs {
-            spacing = MGridSpacing.spacing2
+            container = true
+            spacing(2)
         }
 
-        mGridItem(lg = MGridSize.cells12) {
+        grid {
+            attrs {
+                item = true
+                lg(12)
+            }
             navBar(props.title, props.backRoute)
         }
-        mGridItem(lg = MGridSize.cells12) {
+        grid {
+            attrs {
+                item = true
+                lg(12)
+            }
             props.children()
         }
     }

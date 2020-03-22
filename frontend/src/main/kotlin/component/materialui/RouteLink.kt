@@ -1,13 +1,13 @@
 package component.materialui
 
-import com.ccfraser.muirwik.components.MLinkProps
-import com.ccfraser.muirwik.components.mLink
+import kotlinx.html.P
+import materialui.components.link.LinkElementBuilder
+import materialui.components.link.link
 import react.RBuilder
 import react.router.dom.LinkComponent
-import styled.StyledHandler
 
-fun RBuilder.mRouteLink(to: String, handler: StyledHandler<MLinkProps> = {}) = mLink {
+fun RBuilder.mRouteLink(to: String, block: LinkElementBuilder<P>.() -> Unit) = link {
     attrs.asDynamic().component = LinkComponent::class.js
     attrs.asDynamic().to = to
-    handler()
+    block()
 }

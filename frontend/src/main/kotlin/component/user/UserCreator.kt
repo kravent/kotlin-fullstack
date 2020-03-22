@@ -1,16 +1,25 @@
 package component.user
 
-import com.ccfraser.muirwik.components.*
-import com.ccfraser.muirwik.components.button.MButtonSize
-import com.ccfraser.muirwik.components.button.MButtonVariant
-import com.ccfraser.muirwik.components.button.mButton
-import com.ccfraser.muirwik.components.form.MFormControlMargin
-import com.ccfraser.muirwik.components.form.MFormControlVariant
+import kotlinx.html.js.onChangeFunction
+import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onKeyPressFunction
+import materialui.components.button.button
+import materialui.components.button.enums.ButtonColor
+import materialui.components.button.enums.ButtonSize
+import materialui.components.button.enums.ButtonVariant
+import materialui.components.formcontrol.enums.FormControlMargin
+import materialui.components.formcontrol.enums.FormControlVariant
+import materialui.components.grid.enums.GridAlignItems
+import materialui.components.grid.enums.GridDirection
+import materialui.components.grid.grid
+import materialui.components.textfield.textField
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
 import react.RProps
 import react.rFunction
 import react.useState
+import utils.withEvent
 import utils.withTarget
 
 data class UserCreatorProps(
@@ -27,32 +36,42 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
         }
     }
 
-    mGridContainer {
-        attrs.direction = MGridDirection.row
-        attrs.alignItems = MGridAlignItems.center
-        attrs.spacing = MGridSpacing.spacing8
+    grid {
+        attrs {
+            container = true
+            direction = GridDirection.row
+            alignItems = GridAlignItems.center
+            spacing(8)
+        }
 
-        mGridItem {
-            mTextField(
-                label = "New user",
-                variant = MFormControlVariant.filled,
-                margin = MFormControlMargin.none,
-                value = userName,
-                disabled = props.disabled,
-                onChange = withTarget<HTMLInputElement>{ setUserName(it.value) }
-            ) {
-                attrs.onKeyPress = { if (it.key == "Enter") sendUser() }
+        grid {
+            attrs.item = true
+
+            textField {
+                attrs {
+                    onChangeFunction = withTarget<HTMLInputElement>{ setUserName(it.value) }
+                    onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") sendUser() }
+                    variant = FormControlVariant.filled
+                    margin = FormControlMargin.none
+                    disabled = props.disabled
+                    label { +"New user" }
+                    value = userName
+                }
             }
         }
-        mGridItem {
-            mButton(
-                caption = "Add",
-                variant = MButtonVariant.contained,
-                size = MButtonSize.large,
-                disabled = props.disabled,
-                color = MColor.secondary,
-                onClick = { sendUser() }
-            )
+        grid {
+            attrs.item = true
+
+            button {
+                attrs {
+                    variant = ButtonVariant.contained
+                    size = ButtonSize.large
+                    disabled = props.disabled
+                    color = ButtonColor.secondary
+                    onClickFunction = { sendUser() }
+                }
+                +"Add"
+            }
         }
     }
 }

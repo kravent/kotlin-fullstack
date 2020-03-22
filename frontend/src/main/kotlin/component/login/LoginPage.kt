@@ -3,34 +3,56 @@ package component.login
 import ajax.Api
 import ajax.ApiForbiddenException
 import ajax.ApiUnauthoridedException
-import com.ccfraser.muirwik.components.*
-import com.ccfraser.muirwik.components.button.MButtonVariant
-import com.ccfraser.muirwik.components.button.mButton
-import com.ccfraser.muirwik.components.form.MFormControlMargin
-import com.ccfraser.muirwik.components.form.MFormControlVariant
-import component.materialui.MAlertSeverity
-import component.materialui.mAlert
+import component.materialui.AlertSeverity
+import component.materialui.alert
+import component.materialui.makeStyles
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.InputType
+import kotlinx.html.js.onChangeFunction
+import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onKeyPressFunction
+import materialui.components.button.button
+import materialui.components.button.enums.ButtonColor
+import materialui.components.button.enums.ButtonVariant
+import materialui.components.formcontrol.enums.FormControlMargin
+import materialui.components.formcontrol.enums.FormControlVariant
+import materialui.components.grid.enums.GridAlignItems
+import materialui.components.grid.enums.GridDirection
+import materialui.components.grid.enums.GridJustify
+import materialui.components.grid.grid
+import materialui.components.paper.paper
+import materialui.components.textfield.textField
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
 import react.RProps
 import react.rFunction
 import react.useState
-import styled.css
+import utils.withEvent
 import utils.withTarget
 
 data class LoginPageProps(
     val onUserLogged: (userName: String) -> Unit
 ) : RProps
 
+val useClasses = makeStyles {
+    "box" {
+        marginTop = 50.px
+        padding(all = 50.px)
+    }
+    "buttonContainer" {
+        textAlign = TextAlign.right
+    }
+}
+
 val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
+    val classes = useClasses()
     val (loading, setLoading) = useState(false)
     val (user, setUser) = useState("")
     val (password, setPassword) = useState("")
-    val (error, setError) = useState(null as String?)
+    val (errorMessage, setErrorMessage) = useState(null as String?)
 
     fun doLogin() {
         setLoading(true)
@@ -40,85 +62,104 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
                 props.onUserLogged(user)
                 setUser("")
                 setPassword("")
-                setError(null)
+                setErrorMessage(null)
             } catch (e: ApiUnauthoridedException) {
-                setError("User not found")
+                setErrorMessage("User not found")
             } catch (e: ApiForbiddenException) {
-                setError("CSRF token check error")
+                setErrorMessage("CSRF token check error")
             } catch (e: Exception) {
-                setError("Ooops! Something went wrong")
+                setErrorMessage("Ooops! Something went wrong")
             } finally {
                 setLoading(false)
             }
         }
     }
 
-    mGridContainer {
+    grid {
         attrs {
-            justify = MGridJustify.center
-            alignItems = MGridAlignItems.center
+            container
+            justify = GridJustify.center
+            alignItems = GridAlignItems.center
         }
 
-        mGridItem(xs = MGridSize.cells4) {
-            mPaper {
-                css {
-                    marginTop = 50.px
-                    padding(all = 50.px)
-                }
+        grid {
+            attrs {
+                item = true
+                xs(4)
+            }
 
-                mGridContainer {
+            paper {
+                attrs.className = classes.box
+
+                grid {
                     attrs {
-                        direction = MGridDirection.column
-                        spacing = MGridSpacing.spacing6
+                        container = true
+                        direction = GridDirection.column
+                        spacing(6)
                     }
 
-                    if (error != null) {
-                        mGridItem {
-                            mAlert(text = error, severity = MAlertSeverity.error)
+                    if (errorMessage != null) {
+                        grid {
+                            attrs.item = true
+
+                            alert {
+                                attrs.severity = AlertSeverity.error
+                                +errorMessage
+                            }
                         }
                     }
 
-                    mGridItem {
-                        mTextField(
-                            label = "User",
-                            fullWidth = true,
-                            margin = MFormControlMargin.none,
-                            variant = MFormControlVariant.outlined,
-                            value = user,
-                            disabled = loading,
-                            error = error != null,
-                            onChange = withTarget<HTMLInputElement> { setUser(it.value) }
-                        ) {
-                            attrs.onKeyPress = { if (it.key == "Enter") doLogin() }
+                    grid {
+                        attrs.item = true
+
+                        textField {
+                            attrs {
+                                label { +"User" }
+                                fullWidth = true
+                                margin = FormControlMargin.none
+                                variant = FormControlVariant.outlined
+                                disabled = loading
+                                error = errorMessage != null
+                                value = user
+                                onChangeFunction = withTarget<HTMLInputElement> { setUser(it.value) }
+                                onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") doLogin() }
+                            }
                         }
                     }
 
-                    mGridItem {
-                        mTextField(
-                            label = "Password",
-                            fullWidth = true,
-                            margin = MFormControlMargin.none,
-                            variant = MFormControlVariant.outlined,
-                            type = InputType.password,
-                            value = password,
-                            disabled = loading,
-                            error = error != null,
-                            onChange = withTarget<HTMLInputElement> { setPassword(it.value) }
-                        ) {
-                            attrs.onKeyPress = { if (it.key == "Enter") doLogin() }
+                    grid {
+                        attrs.item = true
+
+                        textField {
+                            attrs {
+                                label { +"Password" }
+                                fullWidth = true
+                                margin = FormControlMargin.none
+                                variant = FormControlVariant.outlined
+                                type = InputType.password
+                                disabled = loading
+                                error = errorMessage != null
+                                value = password
+                                onChangeFunction = withTarget<HTMLInputElement> { setPassword(it.value) }
+                                onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") doLogin() }
+                            }
                         }
                     }
 
-                    mGridItem {
-                        css {
-                            textAlign = TextAlign.right
+                    grid {
+                        attrs {
+                            className = classes.buttonContainer
+                            item = true
                         }
-                        mButton(
-                            caption = "Login",
-                            variant = MButtonVariant.contained,
-                            color = MColor.primary,
-                            onClick = { doLogin() }
-                        )
+
+                        button {
+                            attrs {
+                                variant = ButtonVariant.contained
+                                color = ButtonColor.primary
+                                onClickFunction = { doLogin() }
+                            }
+                            +"Login"
+                        }
                     }
                 }
             }

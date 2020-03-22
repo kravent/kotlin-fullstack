@@ -1,20 +1,27 @@
 package component.main
 
 import ajax.Api
-import com.ccfraser.muirwik.components.*
-import com.ccfraser.muirwik.components.button.mButton
-import com.ccfraser.muirwik.components.button.mIconButton
+import component.materialui.makeStyles
 import component.store.LogoutStoreAction
 import component.store.StoreState
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.flexGrow
+import kotlinx.html.js.onClickFunction
+import materialui.components.appbar.appBar
+import materialui.components.appbar.enums.AppBarPosition
+import materialui.components.button.button
+import materialui.components.button.enums.ButtonColor
+import materialui.components.icon.icon
+import materialui.components.iconbutton.iconButton
+import materialui.components.toolbar.toolbar
+import materialui.components.typography.enums.TypographyVariant
+import materialui.components.typography.typography
 import react.*
 import react.redux.rConnect
 import react.router.dom.LinkComponent
 import redux.RAction
 import redux.WrapperAction
-import styled.css
 
 interface ConnectedNavBarProps : RProps {
     var title: String
@@ -36,7 +43,15 @@ data class NavBarProps(
     val onLogout: () -> Unit
 ) : RProps
 
+private val useStyles = makeStyles {
+    "title" {
+        flexGrow = 1.0
+    }
+}
+
 val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
+    val classes = useStyles()
+
     fun doLogout() {
         MainScope().launch {
             Api.logout()
@@ -44,19 +59,32 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
         }
     }
 
-    mAppBar(position = MAppBarPosition.static) {
-        mToolbar {
+    appBar {
+        attrs.position = AppBarPosition.static
+        toolbar {
             if (props.backRoute != null) {
-                mIconButton(iconName = "arrow_back", color = MColor.inherit) {
-                    attrs.asDynamic().component = LinkComponent::class.js
-                    attrs.asDynamic().to = props.backRoute
+                iconButton {
+                    attrs {
+                        attrs.asDynamic().component = LinkComponent::class.js
+                        attrs.asDynamic().to = props.backRoute
+                    }
+                    icon { +"arrow_back" }
                 }
             }
-            mTypography(variant = MTypographyVariant.h6) {
-                css { flexGrow = 1.0 }
+            typography {
+                attrs {
+                    className = classes.title
+                    variant = TypographyVariant.h6
+                }
                 +props.title
             }
-            mButton(caption = "Logout (${props.userName})", color = MColor.inherit, onClick = { doLogout() })
+            button {
+                attrs {
+                    color = ButtonColor.inherit
+                    onClickFunction = { doLogout() }
+                }
+                +"Logout (${props.userName})"
+            }
         }
     }
 }

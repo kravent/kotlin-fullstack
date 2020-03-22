@@ -1,15 +1,16 @@
 package component
 
-import com.ccfraser.muirwik.components.mThemeProvider
 import component.login.loginInterceptor
 import component.store.storeProvider
+import materialui.styles.defaultMuiTheme
+import materialui.styles.themeprovider.themeProvider
 import react.RBuilder
 import react.ReactElement
 import react.router.dom.browserRouter
 
 fun RBuilder.app(): ReactElement {
     return storeProvider {
-        mThemeProvider {
+        themeProvider(defaultMuiTheme) {
             loginInterceptor {
                 browserRouter {
                     appRouter()
