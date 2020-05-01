@@ -12,6 +12,7 @@ import materialui.components.formcontrol.enums.FormControlVariant
 import materialui.components.grid.enums.GridAlignItems
 import materialui.components.grid.enums.GridDirection
 import materialui.components.grid.grid
+import materialui.components.icon.icon
 import materialui.components.textfield.textField
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.KeyboardEvent
@@ -70,6 +71,7 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
                     color = ButtonColor.secondary
                     onClickFunction = { sendUser() }
                 }
+                icon { +"add" }
                 +"Add"
             }
         }

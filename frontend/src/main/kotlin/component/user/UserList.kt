@@ -2,9 +2,11 @@ package component.user
 
 import component.materialui.AlertSeverity
 import component.materialui.alert
+import materialui.components.icon.icon
 import materialui.components.list.list
 import materialui.components.listitem.listItem
 import materialui.components.listitemicon.listItemIcon
+import materialui.components.listitemtext.listItemText
 import react.RBuilder
 import react.RProps
 import react.rFunction
@@ -23,8 +25,10 @@ val UserList = rFunction("UserList") { props: UserListProps ->
         list {
             props.userList.forEach { userName ->
                 listItem {
-                    listItemIcon { +"person" }
-                    +userName
+                    listItemIcon {
+                        icon { +"person" }
+                    }
+                    listItemText { +userName }
                 }
             }
         }

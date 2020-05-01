@@ -1,6 +1,6 @@
 plugins {
-    kotlin("js") version "1.3.70"
-    kotlin("plugin.serialization") version "1.3.70"
+    kotlin("js") version "1.3.72"
+    kotlin("plugin.serialization") version "1.3.72"
 }
 
 group = "me.agaman.kotlinfullstack"
@@ -9,14 +9,13 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     jcenter()
-    maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
-    maven("https://dl.bintray.com/subroh0508/maven")
 }
 
 dependencies {
-    val kotlinWrapperVersion = "pre.93-kotlin-1.3.70"
-    val reactVersion = "16.13.0"
-    val reactRouterVersion = "4.3.1"
+    val kotlinWrapperVersion = "pre.100-kotlin-1.3.72"
+    val kotlinExtensions = "1.0.1"
+    val reactVersion = "16.13.1"
+    val reactRouterVersion = "5.1.2"
     val reduxVersion = "4.0.0"
     val reactReduxVersion = "5.0.7"
     val ktorVersion = "1.3.1"
@@ -26,6 +25,7 @@ dependencies {
     implementation(project(":common"))
 
     // React, React DOM, React Router DOM + Wrappers
+    implementation("org.jetbrains:kotlin-extensions:$kotlinExtensions-$kotlinWrapperVersion")
     implementation("org.jetbrains:kotlin-react:$reactVersion-$kotlinWrapperVersion")
     implementation("org.jetbrains:kotlin-react-dom:$reactVersion-$kotlinWrapperVersion")
     implementation("org.jetbrains:kotlin-react-router-dom:$reactRouterVersion-$kotlinWrapperVersion")
@@ -38,12 +38,14 @@ dependencies {
     implementation(npm("react-redux", reactReduxVersion))
 
     // Kotlin Styled
+    implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.1")
+    implementation("org.jetbrains:kotlin-css:1.0.0-$kotlinWrapperVersion")
     implementation("org.jetbrains:kotlin-styled:1.0.0-$kotlinWrapperVersion")
     implementation(npm("styled-components", "^4.4.1"))
     implementation(npm("inline-style-prefixer", "^5.1.2"))
 
     // Material UI
-    implementation("subroh0508.net.kotlinmaterialui:core:0.3.0")
+    implementation("subroh0508.net.kotlinmaterialui:core:0.3.14")
     implementation(npm("@material-ui/core", "^4.8.3"))
     implementation(npm("@material-ui/icons", "^4.5.1"))
     implementation(npm("@material-ui/lab", "^4.0.0-alpha.45"))

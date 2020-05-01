@@ -1,7 +1,6 @@
 package component.main
 
 import ajax.Api
-import component.materialui.makeStyles
 import component.store.LogoutStoreAction
 import component.store.StoreState
 import kotlinx.coroutines.MainScope
@@ -17,6 +16,7 @@ import materialui.components.iconbutton.iconButton
 import materialui.components.toolbar.toolbar
 import materialui.components.typography.enums.TypographyVariant
 import materialui.components.typography.typography
+import materialui.styles.withStyles
 import react.*
 import react.redux.rConnect
 import react.router.dom.LinkComponent
@@ -43,14 +43,8 @@ data class NavBarProps(
     val onLogout: () -> Unit
 ) : RProps
 
-private val useStyles = makeStyles {
-    "title" {
-        flexGrow = 1.0
-    }
-}
-
 val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
-    val classes = useStyles()
+    val titleStyle = props.asDynamic()["classes"]["title"] as String
 
     fun doLogout() {
         MainScope().launch {
@@ -73,7 +67,7 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
             }
             typography {
                 attrs {
-                    className = classes.title
+                    className = titleStyle
                     variant = TypographyVariant.h6
                 }
                 +props.title
@@ -89,6 +83,12 @@ val NavBar = rFunction("NavBarComponent") { props: NavBarProps ->
     }
 }
 
+val StyledNavbar = withStyles(NavBar, {
+    "title" {
+        flexGrow = 1.0
+    }
+})
+
 val NavBarConnector =
     rConnect<StoreState, RAction, WrapperAction, ConnectedNavBarProps, NavBarStateProps, NavBarDispatchProps, NavBarProps>(
         { state, _ ->
@@ -99,7 +99,7 @@ val NavBarConnector =
         }
     )
 
-val ConnectedNavBar = NavBarConnector(NavBar)
+val ConnectedNavBar = NavBarConnector(rFunction("SytledNavbar") { StyledNavbar.node(it) })
 
 fun RBuilder.navBar(
     title: String,

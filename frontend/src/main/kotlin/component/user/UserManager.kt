@@ -85,13 +85,6 @@ val UserManager = rFunction("UserManager") { _: RProps ->
                 }
                 userList(it)
             }
-            grid {
-                attrs {
-                    item = true
-                    lg(12)
-                }
-                userList(it)
-            }
         }
         state.error?.also { errorText ->
             grid {

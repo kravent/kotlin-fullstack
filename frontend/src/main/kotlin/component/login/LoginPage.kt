@@ -5,7 +5,6 @@ import ajax.ApiForbiddenException
 import ajax.ApiUnauthoridedException
 import component.materialui.AlertSeverity
 import component.materialui.alert
-import component.materialui.makeStyles
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
@@ -24,6 +23,7 @@ import materialui.components.grid.enums.GridJustify
 import materialui.components.grid.grid
 import materialui.components.paper.paper
 import materialui.components.textfield.textField
+import materialui.styles.withStyles
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
@@ -37,18 +37,10 @@ data class LoginPageProps(
     val onUserLogged: (userName: String) -> Unit
 ) : RProps
 
-val useClasses = makeStyles {
-    "box" {
-        marginTop = 50.px
-        padding(all = 50.px)
-    }
-    "buttonContainer" {
-        textAlign = TextAlign.right
-    }
-}
-
 val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
-    val classes = useClasses()
+    val boxStyle = props.asDynamic()["classes"]["box"] as String
+    val buttonContainerStyle = props.asDynamic()["classes"]["buttonContainer"] as String
+
     val (loading, setLoading) = useState(false)
     val (user, setUser) = useState("")
     val (password, setPassword) = useState("")
@@ -77,7 +69,7 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
 
     grid {
         attrs {
-            container
+            container = true
             justify = GridJustify.center
             alignItems = GridAlignItems.center
         }
@@ -89,7 +81,7 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
             }
 
             paper {
-                attrs.className = classes.box
+                attrs.className = boxStyle
 
                 grid {
                     attrs {
@@ -148,7 +140,7 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
 
                     grid {
                         attrs {
-                            className = classes.buttonContainer
+                            className = buttonContainerStyle
                             item = true
                         }
 
@@ -167,4 +159,14 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
     }
 }
 
-fun RBuilder.loginPage(onUserLogged: (userName: String) -> Unit) = child(LoginPage, LoginPageProps(onUserLogged)) {}
+val StyledLoginPage = withStyles(LoginPage, {
+    "box" {
+        marginTop = 50.px
+        padding(all = 50.px)
+    }
+    "buttonContainer" {
+        textAlign = TextAlign.right
+    }
+})
+
+fun RBuilder.loginPage(onUserLogged: (userName: String) -> Unit) = child(StyledLoginPage, LoginPageProps(onUserLogged)) {}
