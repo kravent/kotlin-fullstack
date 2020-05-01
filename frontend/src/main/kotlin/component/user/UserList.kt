@@ -1,12 +1,12 @@
 package component.user
 
-import component.materialui.AlertSeverity
-import component.materialui.alert
 import materialui.components.icon.icon
 import materialui.components.list.list
 import materialui.components.listitem.listItem
 import materialui.components.listitemicon.listItemIcon
 import materialui.components.listitemtext.listItemText
+import materialui.lab.components.alert.alert
+import materialui.lab.components.alert.enums.AlertSeverity
 import react.RBuilder
 import react.RProps
 import react.rFunction

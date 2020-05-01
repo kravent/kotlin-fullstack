@@ -20,6 +20,7 @@ dependencies {
     val reactReduxVersion = "5.0.7"
     val ktorVersion = "1.3.1"
     val serializationVersion = "0.20.0"
+    val kotlinMaterialUi = "0.3.14"
 
     implementation(kotlin("stdlib-js"))
     implementation(project(":common"))
@@ -45,7 +46,8 @@ dependencies {
     implementation(npm("inline-style-prefixer", "^5.1.2"))
 
     // Material UI
-    implementation("subroh0508.net.kotlinmaterialui:core:0.3.14")
+    implementation("subroh0508.net.kotlinmaterialui:core:$kotlinMaterialUi")
+    implementation("subroh0508.net.kotlinmaterialui:lab:$kotlinMaterialUi")
     implementation(npm("@material-ui/core", "^4.8.3"))
     implementation(npm("@material-ui/icons", "^4.5.1"))
     implementation(npm("@material-ui/lab", "^4.0.0-alpha.45"))

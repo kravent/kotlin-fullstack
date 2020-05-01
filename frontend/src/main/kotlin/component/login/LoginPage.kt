@@ -3,8 +3,6 @@ package component.login
 import ajax.Api
 import ajax.ApiForbiddenException
 import ajax.ApiUnauthoridedException
-import component.materialui.AlertSeverity
-import component.materialui.alert
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
@@ -23,6 +21,8 @@ import materialui.components.grid.enums.GridJustify
 import materialui.components.grid.grid
 import materialui.components.paper.paper
 import materialui.components.textfield.textField
+import materialui.lab.components.alert.alert
+import materialui.lab.components.alert.enums.AlertSeverity
 import materialui.styles.withStyles
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.KeyboardEvent

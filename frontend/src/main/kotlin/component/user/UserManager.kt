@@ -1,8 +1,6 @@
 package component.user
 
 import ajax.Api
-import component.materialui.AlertSeverity
-import component.materialui.alert
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -11,6 +9,8 @@ import kotlinx.html.js.onClickFunction
 import materialui.components.button.button
 import materialui.components.circularprogress.circularProgress
 import materialui.components.grid.grid
+import materialui.lab.components.alert.alert
+import materialui.lab.components.alert.enums.AlertSeverity
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
