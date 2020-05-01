@@ -29,7 +29,7 @@ import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
 import react.RProps
 import react.rFunction
-import react.useState
+import react.state
 import utils.withEvent
 import utils.withTarget
 
@@ -41,28 +41,28 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
     val boxStyle = props.asDynamic()["classes"]["box"] as String
     val buttonContainerStyle = props.asDynamic()["classes"]["buttonContainer"] as String
 
-    val (loading, setLoading) = useState(false)
-    val (user, setUser) = useState("")
-    val (password, setPassword) = useState("")
-    val (errorMessage, setErrorMessage) = useState(null as String?)
+    var loading by state(false)
+    var user by state("")
+    var password by state("")
+    var errorMessage by state(null as String?)
 
     fun doLogin() {
-        setLoading(true)
+        loading = true
         MainScope().launch {
             try {
                 Api.login(user, password)
                 props.onUserLogged(user)
-                setUser("")
-                setPassword("")
-                setErrorMessage(null)
+                user = ""
+                password = ""
+                errorMessage = null
             } catch (e: ApiUnauthoridedException) {
-                setErrorMessage("User not found")
+                errorMessage = "User not found"
             } catch (e: ApiForbiddenException) {
-                setErrorMessage("CSRF token check error")
+                errorMessage = "CSRF token check error"
             } catch (e: Exception) {
-                setErrorMessage("Ooops! Something went wrong")
+                errorMessage = "Ooops! Something went wrong"
             } finally {
-                setLoading(false)
+                loading = false
             }
         }
     }
@@ -90,13 +90,13 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
                         spacing(6)
                     }
 
-                    if (errorMessage != null) {
+                    errorMessage?.let {
                         grid {
                             attrs.item = true
 
                             alert {
                                 attrs.severity = AlertSeverity.error
-                                +errorMessage
+                                +it
                             }
                         }
                     }
@@ -113,7 +113,7 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
                                 disabled = loading
                                 error = errorMessage != null
                                 value = user
-                                onChangeFunction = withTarget<HTMLInputElement> { setUser(it.value) }
+                                onChangeFunction = withTarget<HTMLInputElement> { user = it.value }
                                 onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") doLogin() }
                             }
                         }
@@ -132,7 +132,7 @@ val LoginPage = rFunction("LoginPage") { props: LoginPageProps ->
                                 disabled = loading
                                 error = errorMessage != null
                                 value = password
-                                onChangeFunction = withTarget<HTMLInputElement> { setPassword(it.value) }
+                                onChangeFunction = withTarget<HTMLInputElement> { password = it.value }
                                 onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") doLogin() }
                             }
                         }

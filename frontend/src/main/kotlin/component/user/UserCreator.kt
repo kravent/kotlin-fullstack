@@ -19,7 +19,7 @@ import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
 import react.RProps
 import react.rFunction
-import react.useState
+import react.state
 import utils.withEvent
 import utils.withTarget
 
@@ -29,7 +29,7 @@ data class UserCreatorProps(
 ) : RProps
 
 val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
-    val (userName, setUserName) = useState("")
+    var userName by state("")
 
     fun sendUser() {
         if (userName.isNotEmpty()) {
@@ -50,7 +50,7 @@ val UserCreator = rFunction("UserCreator") { props: UserCreatorProps ->
 
             textField {
                 attrs {
-                    onChangeFunction = withTarget<HTMLInputElement>{ setUserName(it.value) }
+                    onChangeFunction = withTarget<HTMLInputElement>{ userName = it.value }
                     onKeyPressFunction = withEvent<KeyboardEvent>{ if (it.key == "Enter") sendUser() }
                     variant = FormControlVariant.filled
                     margin = FormControlMargin.none
