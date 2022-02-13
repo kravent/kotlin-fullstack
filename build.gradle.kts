@@ -79,6 +79,8 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
+                implementation(kotlin("stdlib"))
+
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")

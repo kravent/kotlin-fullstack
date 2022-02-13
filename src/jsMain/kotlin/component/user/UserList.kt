@@ -2,14 +2,14 @@ package component.user
 
 import mui.icons.material.Person
 import mui.material.*
-import react.FC
 import react.Props
+import utils.NC
 
 external interface UserListProps : Props {
     var userList: List<String>
 }
 
-val UserList = FC("UserList") { props: UserListProps ->
+val UserList by NC { props: UserListProps ->
     if (props.userList.isEmpty()) {
         Alert {
             severity = AlertColor.info

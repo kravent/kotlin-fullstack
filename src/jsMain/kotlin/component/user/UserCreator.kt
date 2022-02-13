@@ -4,11 +4,11 @@ import csstype.AlignItems
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.ResponsiveStyleValue
-import react.FC
 import react.Props
 import react.ReactNode
 import react.dom.onChange
 import react.useState
+import utils.NC
 import utils.handleInputEvent
 
 external interface UserCreatorProps : Props {
@@ -16,7 +16,7 @@ external interface UserCreatorProps : Props {
     var onCreateUserFunction: (userName: String) -> Unit
 }
 
-val UserCreator = FC("UserCreator") { props: UserCreatorProps ->
+val UserCreator by NC { props: UserCreatorProps ->
     val (userName, setUserName) = useState("")
 
     fun sendUser() {

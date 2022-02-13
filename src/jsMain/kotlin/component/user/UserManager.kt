@@ -11,10 +11,9 @@ import me.agaman.kotlinfullstack.model.UserListResponse
 import me.agaman.kotlinfullstack.route.ApiRoute
 import mui.material.*
 import mui.system.ResponsiveStyleValue
-import react.FC
-import react.Props
 import react.useEffectOnce
 import react.useReducer
+import utils.NC
 
 private data class UserManagerState(
     val loading: Boolean = true,
@@ -36,7 +35,7 @@ private fun stateReducer(state: UserManagerState, event: UserManagerEvent): User
     is UserManagerEvent.Error -> state.copy(loading = false, error = event.error)
 }
 
-val UserManager = FC<Props>("UserManager") {
+val UserManager by NC {
     val (state, onStateEvent) = useReducer(::stateReducer, UserManagerState())
 
     fun reloadUsers(): Job {

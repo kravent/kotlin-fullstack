@@ -12,18 +12,18 @@ import kotlinx.coroutines.launch
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.ResponsiveStyleValue
-import react.FC
 import react.Props
 import react.ReactNode
 import react.dom.onChange
 import react.useState
+import utils.NC
 import utils.handleInputEvent
 
 external interface LoginPageProps : Props {
     var onUserLogged: (userName: String) -> Unit
 }
 
-val LoginPage = FC("LoginPage") { props: LoginPageProps ->
+val LoginPage by NC { props: LoginPageProps ->
     var loading by useState(false)
     var user by useState("")
     var password by useState("")

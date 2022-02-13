@@ -2,16 +2,15 @@ package component
 
 import component.main.PageWrapper
 import component.user.UserManager
-import react.FC
-import react.Props
 import react.createElement
 import react.dom.html.ReactHTML.h1
 import react.router.Route
 import react.router.Routes
 import react.router.dom.BrowserRouter
+import utils.NC
 import react.router.dom.Link as RouterLink
 
-val IndexPage = FC<Props> {
+val IndexPage by NC {
     PageWrapper {
         title = "Home"
         RouterLink {
@@ -21,7 +20,7 @@ val IndexPage = FC<Props> {
     }
 }
 
-val UsersPage = FC<Props> {
+val UsersPage by NC {
     PageWrapper {
         title = "Users"
         backRoute = "/"
@@ -29,12 +28,12 @@ val UsersPage = FC<Props> {
     }
 }
 
-val NotFoundPage = FC<Props> {
+val NotFoundPage by NC {
     h1 { +"ERROR: Page not found" }
 }
 
 
-val AppRouter = FC<Props> {
+val AppRouter by NC {
     BrowserRouter {
         Routes {
             Route {

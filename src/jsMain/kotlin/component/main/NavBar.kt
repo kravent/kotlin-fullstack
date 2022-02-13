@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import kotlinx.js.jso
 import mui.icons.material.ArrowBack
 import mui.material.*
-import react.FC
 import react.Props
 import react.createElement
 import react.invoke
@@ -17,6 +16,7 @@ import react.redux.rConnect
 import react.router.useNavigate
 import redux.RAction
 import redux.WrapperAction
+import utils.NC
 
 external interface NavBarProps : Props {
     var title: String
@@ -33,7 +33,7 @@ external interface NavBarDispatchProps : Props {
 
 external interface InnerNavBarProps : NavBarProps, NavBarStateProps, NavBarDispatchProps
 
-val InnerNavBar = FC("InnerNavBar") { props: InnerNavBarProps ->
+val InnerNavBar by NC { props: InnerNavBarProps ->
     val navigate = useNavigate()
 
     fun doLogout() {

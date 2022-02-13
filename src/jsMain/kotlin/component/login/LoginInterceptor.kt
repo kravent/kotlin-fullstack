@@ -2,10 +2,14 @@ package component.login
 
 import component.store.LoginStoreAction
 import component.store.StoreState
-import react.*
+import react.Props
+import react.PropsWithChildren
+import react.createElement
+import react.invoke
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
+import utils.NC
 
 external interface LoginInterceptorProps : PropsWithChildren
 
@@ -19,7 +23,7 @@ external interface LoginInterceptorDispatchProps : Props {
 
 external interface InnerLoginInterceptorProps : LoginInterceptorProps, LoginInterceptorStateProps, LoginInterceptorDispatchProps
 
-private val InnerLoginInterceptor = FC("InnerLoginInterceptor") { props: InnerLoginInterceptorProps ->
+private val InnerLoginInterceptor by NC { props: InnerLoginInterceptorProps ->
     if (props.isLogged) {
         props.children()
     } else {
