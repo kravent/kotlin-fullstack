@@ -50,7 +50,7 @@ suspend inline fun <reified T> apiRequest(requestConfigurator: HttpRequestBuilde
                 }
                 HttpStatusCode.Forbidden -> {
                     // TODO show alert asking the user to reload the window
-                    throw ApiUnauthoridedException(e.response)
+                    throw ApiForbiddenException(e.response)
                 }
             }
         }

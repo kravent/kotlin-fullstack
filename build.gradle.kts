@@ -31,8 +31,8 @@ kotlin {
         withJava()
     }
     js {
+        binaries.executable()
         browser {
-            binaries.executable()
             runTask {
                 outputFileName = "static/app.js"
                 devServer = KotlinWebpackConfig.DevServer(
