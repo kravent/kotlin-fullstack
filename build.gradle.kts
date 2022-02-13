@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("multiplatform") version "1.6.10"
     kotlin("plugin.serialization") version "1.6.10"
+    id("org.jetbrains.compose") version "1.0.1-rc2"
     application //to run JVM part
 }
 
@@ -13,6 +14,8 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 val kotlinVersion = "1.6.10"
@@ -30,23 +33,16 @@ kotlin {
     jvm {
         withJava()
     }
-    js {
+    js(IR) {
         binaries.executable()
         browser {
-            runTask {
+            commonWebpackConfig {
                 outputFileName = "static/app.js"
-                devServer = KotlinWebpackConfig.DevServer(
-                    port = 8001,
-                    open = false,
-                    proxy = mutableMapOf(
-                        "/api" to "http://localhost:8000",
-                        "/static" to { null },
-                        "/" to "http://localhost:8000"
-                    ),
+                devServer?.port = 8001
+                devServer?.open = false
+                devServer?.proxy = mutableMapOf(
+                    "/api" to "http://localhost:8000",
                 )
-            }
-            webpackTask {
-                outputFileName = "static/app.js"
             }
         }
     }
@@ -67,9 +63,11 @@ kotlin {
                 implementation("io.ktor:ktor-server-core:$ktorVersion")
                 implementation("io.ktor:ktor-server-netty:$ktorVersion")
                 implementation("io.ktor:ktor-serialization:$ktorVersion")
-                implementation("io.ktor:ktor-html-builder:$ktorVersion")
                 implementation("io.ktor:ktor-auth:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+                // only necessary until https://github.com/JetBrains/compose-jb/issues/1568 is resolved
+                implementation(compose.runtime)
             }
         }
         val jvmTest by getting {
@@ -79,23 +77,12 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib"))
-
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:$reactRouterVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-redux:$reduxVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-redux:$reactReduxVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui:$muiVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui-icons:$muiVersion-$kotlinWrappersVersion")
-
-                // Needed for MUI
-                implementation(npm("@emotion/react", "11.7.1"))
-                implementation(npm("@emotion/styled", "11.6.0"))
+                implementation(compose.runtime)
+                implementation(compose.web.core)
             }
         }
         val jsTest by getting {
@@ -121,7 +108,8 @@ tasks.getByName<Jar>("jvmJar") {
     }
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
-    from(webpackTask.destinationDirectory) // bring output files along into the JAR
+    from(webpackTask.destinationDirectory) // bring webpack output file along into the JAR
+    include(webpackTask.outputFileName)
 }
 
 

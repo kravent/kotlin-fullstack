@@ -1,11 +1,8 @@
-import component.App
-import kotlinx.browser.document
-import react.create
-import react.dom.render
+import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.renderComposable
 
 fun main() {
-    render(
-        element = App.create(),
-        container = document.getElementById("root")!!,
-    )
+    renderComposable(rootElementId = "root") {
+        Text("Hello world!")
+    }
 }

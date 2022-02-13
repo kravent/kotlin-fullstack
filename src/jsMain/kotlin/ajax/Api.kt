@@ -1,7 +1,5 @@
 package ajax
 
-import component.store.LogoutStoreAction
-import component.store.Store
 import io.ktor.client.*
 import io.ktor.client.engine.js.*
 import io.ktor.client.features.*
@@ -45,7 +43,7 @@ suspend inline fun <reified T> apiRequest(requestConfigurator: HttpRequestBuilde
         if (e is ClientRequestException) {
             when (e.response.status) {
                 HttpStatusCode.Unauthorized -> {
-                    Store.dispatch(LogoutStoreAction)
+                    // TODO logout user
                     throw ApiUnauthoridedException(e.response)
                 }
                 HttpStatusCode.Forbidden -> {
