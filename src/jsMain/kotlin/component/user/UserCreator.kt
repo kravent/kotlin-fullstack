@@ -3,7 +3,7 @@ package component.user
 import csstype.AlignItems
 import kotlinx.js.jso
 import mui.material.*
-import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import react.Props
 import react.ReactNode
 import react.dom.onChange
@@ -27,8 +27,8 @@ val UserCreator by NC { props: UserCreatorProps ->
 
     Grid {
         container = true
-        direction = ResponsiveStyleValue(GridDirection.row)
-        spacing = ResponsiveStyleValue(8)
+        direction = responsive(GridDirection.row)
+        spacing = responsive(8)
         sx = jso { alignItems = AlignItems.center }
 
         Grid {
@@ -40,7 +40,7 @@ val UserCreator by NC { props: UserCreatorProps ->
                 value = userName
                 disabled = props.disabled
                 onChange = handleInputEvent{ setUserName(it.value) }
-                onKeyPress = { if(it.key == "Enter") sendUser() }
+                onKeyDown = { if(it.key == "Enter") sendUser() }
             }
         }
         Grid {

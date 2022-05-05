@@ -10,7 +10,7 @@ import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
 import me.agaman.kotlinfullstack.route.ApiRoute
 import mui.material.*
-import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import react.useEffectOnce
 import react.useReducer
 import utils.NC
@@ -73,7 +73,7 @@ val UserManager by NC {
 
     Grid {
         container = true
-        spacing = ResponsiveStyleValue(4)
+        spacing = responsive(4)
 
         state.users?.also {
             Grid {

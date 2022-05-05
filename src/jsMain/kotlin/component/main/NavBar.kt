@@ -3,12 +3,13 @@ package component.main
 import ajax.Api
 import component.store.LogoutStoreAction
 import component.store.StoreState
-import csstype.FlexGrow
+import csstype.number
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.js.jso
 import mui.icons.material.ArrowBack
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import react.Props
 import react.createElement
 import react.invoke
@@ -55,8 +56,8 @@ val InnerNavBar by NC { props: InnerNavBarProps ->
                 }
             }
             Typography {
-                variant = "h6"
-                sx = jso { flexGrow = FlexGrow(1.0) }
+                variant = TypographyVariant.h6
+                sx = jso { flexGrow = number(1.0) }
                 +props.title
             }
             Button {

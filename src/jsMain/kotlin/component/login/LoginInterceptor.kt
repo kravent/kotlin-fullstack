@@ -25,7 +25,7 @@ external interface InnerLoginInterceptorProps : LoginInterceptorProps, LoginInte
 
 private val InnerLoginInterceptor by NC { props: InnerLoginInterceptorProps ->
     if (props.isLogged) {
-        props.children()
+        +props.children
     } else {
         LoginPage {
             onUserLogged = { props.onLogin(it) }

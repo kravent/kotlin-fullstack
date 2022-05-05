@@ -1,7 +1,7 @@
 package component.main
 
 import mui.material.Grid
-import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import react.PropsWithChildren
 import utils.NC
 
@@ -13,7 +13,7 @@ external interface MainPageProps : PropsWithChildren {
 val PageWrapper by NC { props: MainPageProps ->
     Grid {
         container = true
-        spacing = ResponsiveStyleValue(2)
+        spacing = responsive(2)
 
         Grid {
             item = true
@@ -26,7 +26,7 @@ val PageWrapper by NC { props: MainPageProps ->
         Grid {
             item = true
             lg = 12
-            props.children()
+            +props.children
         }
     }
 }

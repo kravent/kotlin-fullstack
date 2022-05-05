@@ -15,16 +15,17 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.6.10"
+val kotlinVersion = "1.6.21"
 val serializationVersion = "1.3.0"
 val ktorVersion = "1.6.7"
 val logbackVersion = "1.2.3"
-val reactVersion = "17.0.2"
-val reactRouterVersion = "6.2.1"
+val reactVersion = "18.1.0"
+val reactRouterVersion = "6.3.0"
 val reduxVersion = "4.1.2"
 val reactReduxVersion = "7.2.6"
-val muiVersion = "5.4.1"
-val kotlinWrappersVersion = "pre.298-kotlin-$kotlinVersion"
+val muiVersion = "5.6.3"
+val muiIconsVersion = "5.6.2"
+val kotlinWrappersVersion = "pre.333"
 
 kotlin {
     jvm {
@@ -91,7 +92,7 @@ kotlin {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-redux:$reduxVersion-$kotlinWrappersVersion")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-redux:$reactReduxVersion-$kotlinWrappersVersion")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-mui:$muiVersion-$kotlinWrappersVersion")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui-icons:$muiVersion-$kotlinWrappersVersion")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-mui-icons:$muiIconsVersion-$kotlinWrappersVersion")
 
                 // Needed for MUI
                 implementation(npm("@emotion/react", "11.7.1"))

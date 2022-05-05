@@ -11,7 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.js.jso
 import mui.material.*
-import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import react.Props
 import react.ReactNode
 import react.dom.onChange
@@ -70,8 +70,8 @@ val LoginPage by NC { props: LoginPageProps ->
 
                 Grid {
                     container = true
-                    direction = ResponsiveStyleValue(GridDirection.column)
-                    spacing = ResponsiveStyleValue(6)
+                    direction = responsive(GridDirection.column)
+                    spacing = responsive(6)
 
                     errorMessage?.let {
                         Grid {
@@ -94,7 +94,7 @@ val LoginPage by NC { props: LoginPageProps ->
                             disabled = loading
                             error = errorMessage != null
                             onChange = handleInputEvent { user = it.value }
-                            onKeyPress = { if (it.key == "Enter") doLogin() }
+                            onKeyDown = { if (it.key == "Enter") doLogin() }
                         }
                     }
 
@@ -109,7 +109,7 @@ val LoginPage by NC { props: LoginPageProps ->
                             disabled = loading
                             error = errorMessage != null
                             onChange = handleInputEvent { password = it.value }
-                            onKeyPress = { if (it.key == "Enter") doLogin() }
+                            onKeyDown = { if (it.key == "Enter") doLogin() }
                         }
                     }
 
