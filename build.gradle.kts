@@ -124,7 +124,8 @@ tasks.getByName<Jar>("jvmJar") {
     val taskName = if (project.hasProperty("isProduction")
         || project.gradle.startParameter.taskNames.contains("installDist")
     ) {
-        "jsBrowserProductionWebpack"
+        // FIXME Change to "jsBrowserProductionWebpack" when webpack optimization doesn't fail with "invalid property id" anymore
+        "jsBrowserDevelopmentWebpack"
     } else {
         "jsBrowserDevelopmentWebpack"
     }
@@ -142,7 +143,7 @@ tasks {
     }
 }
 
-// only necessary until https://youtrack.jetbrains.com/issue/KT-37964 is resolved
+// FIXME Remove when https://youtrack.jetbrains.com/issue/KT-37964 is resolved
 distributions {
     main {
         contents {
