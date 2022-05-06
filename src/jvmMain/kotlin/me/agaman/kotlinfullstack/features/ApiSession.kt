@@ -1,10 +1,10 @@
 package me.agaman.kotlinfullstack.features
 
-import io.ktor.application.*
-import io.ktor.sessions.*
+import io.ktor.server.application.*
+import io.ktor.server.sessions.*
 import kotlin.time.Duration.Companion.days
 
-fun Sessions.Configuration.apiSessionsCookie() {
+fun SessionsConfig.apiSessionsCookie() {
     cookie<ApiSession>("session", SessionStorageMemory()) {
         cookie.maxAgeInSeconds = 7.days.inWholeSeconds
     }

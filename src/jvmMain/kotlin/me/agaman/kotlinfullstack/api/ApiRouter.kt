@@ -1,10 +1,10 @@
 package me.agaman.kotlinfullstack.api
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse

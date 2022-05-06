@@ -3,22 +3,23 @@ package ajax
 import component.store.LogoutStoreAction
 import component.store.Store
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.js.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.browser.window
 import me.agaman.kotlinfullstack.route.ApiRoute
 import me.agaman.kotlinfullstack.route.Route
 import utils.CsrfTokenHandler
 
 val client = HttpClient(Js) {
-    install(JsonFeature) {
-        serializer = KotlinxSerializer()
+    install(ContentNegotiation) {
+        json()
     }
 }
 
@@ -39,7 +40,7 @@ suspend inline fun <reified T> apiRequest(requestConfigurator: HttpRequestBuilde
             if (method != HttpMethod.Get) {
                 header("X-CSRF", CsrfTokenHandler.getToken())
             }
-        }
+        }.body()
     } catch (e: Exception) {
         console.error(e)
         if (e is ClientRequestException) {
@@ -62,10 +63,10 @@ object Api {
         val csrfToken = apiRequest<String> {
             method = HttpMethod.Post
             localUrl(Route.LOGIN)
-            body = FormDataContent(Parameters.build {
+            setBody(FormDataContent(Parameters.build {
                 set("user", user)
                 set("password", password)
-            })
+            }))
         }
         CsrfTokenHandler.setToken(csrfToken)
     }
@@ -93,6 +94,6 @@ object Api {
         method = HttpMethod.Post
         localUrl(apiRoute)
         contentType(ContentType.Application.Json)
-        body = data
+        setBody(data)
     }
 }

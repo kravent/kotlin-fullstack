@@ -1,15 +1,18 @@
 package me.agaman.kotlinfullstack
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
-import io.ktor.html.*
 import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.serialization.*
-import io.ktor.sessions.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.html.*
+import io.ktor.server.http.content.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.compression.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.defaultheaders.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import kotlinx.html.*
 import me.agaman.kotlinfullstack.api.apiRouter
 import me.agaman.kotlinfullstack.features.*

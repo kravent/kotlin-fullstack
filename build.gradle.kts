@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("multiplatform") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     application //to run JVM part
 }
 
@@ -15,9 +15,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.6.21"
 val serializationVersion = "1.3.0"
-val ktorVersion = "1.6.7"
+val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.3"
 val reactVersion = "18.1.0"
 val reactRouterVersion = "6.3.0"
@@ -67,9 +66,14 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-server-core:$ktorVersion")
                 implementation("io.ktor:ktor-server-netty:$ktorVersion")
-                implementation("io.ktor:ktor-serialization:$ktorVersion")
-                implementation("io.ktor:ktor-html-builder:$ktorVersion")
-                implementation("io.ktor:ktor-auth:$ktorVersion")
+                implementation("io.ktor:ktor-server-default-headers:$ktorVersion")
+                implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+                implementation("io.ktor:ktor-server-compression:$ktorVersion")
+                implementation("io.ktor:ktor-server-sessions:$ktorVersion")
+                implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
+                implementation("io.ktor:ktor-server-auth:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
             }
         }
@@ -82,9 +86,10 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib"))
 
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:$reactVersion-$kotlinWrappersVersion")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:$reactVersion-$kotlinWrappersVersion")
