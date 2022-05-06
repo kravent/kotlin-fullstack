@@ -2,98 +2,84 @@ package ajax
 
 import component.store.LogoutStoreAction
 import component.store.Store
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.js.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.js.Js
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.resources.Resources
+import io.ktor.client.plugins.resources.get
+import io.ktor.client.plugins.resources.post
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.browser.window
-import me.agaman.kotlinfullstack.route.ApiRoute
-import me.agaman.kotlinfullstack.route.Route
+import io.ktor.serialization.kotlinx.json.json
 import utils.CsrfTokenHandler
-
-val client = HttpClient(Js) {
-    install(ContentNegotiation) {
-        json()
-    }
-}
+import me.agaman.kotlinfullstack.route.Api as ApiRoute
 
 class ApiUnauthoridedException(response: HttpResponse) : ResponseException(response, "Unauthorided")
 class ApiForbiddenException(response: HttpResponse) : ResponseException(response, "Forbidden")
+class ApiException(response: HttpResponse, text: String) : ResponseException(response, text)
 
-fun HttpRequestBuilder.localUrl(path: String) = url {
-    takeFrom(window.location.href)
-    encodedPath = path
-}
-fun HttpRequestBuilder.localUrl(route: Route) = localUrl(route.path)
-fun HttpRequestBuilder.localUrl(apiRoute: ApiRoute) = localUrl("${Route.API.path}/${apiRoute.path}")
-
-suspend inline fun <reified T> apiRequest(requestConfigurator: HttpRequestBuilder.() -> Unit): T =
-    try {
-        client.request {
-            requestConfigurator()
-            if (method != HttpMethod.Get) {
-                header("X-CSRF", CsrfTokenHandler.getToken())
-            }
-        }.body()
-    } catch (e: Exception) {
-        console.error(e)
-        if (e is ClientRequestException) {
-            when (e.response.status) {
-                HttpStatusCode.Unauthorized -> {
-                    Store.dispatch(LogoutStoreAction)
-                    throw ApiUnauthoridedException(e.response)
+object Api {
+    val client = HttpClient(Js) {
+        install(Resources)
+        install(ContentNegotiation) {
+            json()
+        }
+        defaultRequest {
+            // TODO add headers only to non GET methods
+            headers.append("X-CSRF", CsrfTokenHandler.getToken())
+        }
+        HttpResponseValidator {
+            validateResponse { response ->
+                when (response.status) {
+                    HttpStatusCode.Unauthorized -> {
+                        Store.dispatch(LogoutStoreAction)
+                        throw ApiUnauthoridedException(response)
+                    }
+                    HttpStatusCode.Forbidden -> {
+                        // TODO show alert asking the user to reload the window
+                        throw ApiForbiddenException(response)
+                    }
                 }
-                HttpStatusCode.Forbidden -> {
-                    // TODO show alert asking the user to reload the window
-                    throw ApiForbiddenException(e.response)
+                if (!response.status.isSuccess()) {
+                    throw ApiException(response, response.status.description)
                 }
             }
         }
-        throw e
     }
 
-object Api {
     suspend fun login(user: String, password: String) {
-        val csrfToken = apiRequest<String> {
-            method = HttpMethod.Post
-            localUrl(Route.LOGIN)
+        val csrfToken: String = client.post(ApiRoute.Login()) {
             setBody(FormDataContent(Parameters.build {
                 set("user", user)
                 set("password", password)
             }))
-        }
+        }.body()
         CsrfTokenHandler.setToken(csrfToken)
     }
 
     suspend fun logout() {
-        val csrfToken = apiRequest<String> {
-            method = HttpMethod.Post
-            localUrl(Route.LOGOUT)
-        }
+        val csrfToken: String = client.post(ApiRoute.Logout()).body()
         CsrfTokenHandler.setToken(csrfToken)
     }
 
-    suspend inline fun <reified T> get(apiRoute: ApiRoute): T = apiRequest {
-        method = HttpMethod.Get
-        localUrl(apiRoute)
+    suspend inline fun <reified T : Any> get(resource: T): HttpResponse {
+        return client.get(resource)
     }
 
-    suspend inline fun <reified T> rawPost(apiRoute: ApiRoute, noinline formBuilder: FormBuilder.() -> Unit): T = apiRequest {
-        method = HttpMethod.Post
-        localUrl(apiRoute)
-        formData(formBuilder)
+    suspend inline fun <reified T : Any> post(resource: T): HttpResponse {
+        return client.post(resource)
     }
 
-    suspend inline fun <reified T> post(apiRoute: ApiRoute, data: Any): T = apiRequest {
-        method = HttpMethod.Post
-        localUrl(apiRoute)
-        contentType(ContentType.Application.Json)
-        setBody(data)
+    suspend inline fun <reified T : Any, reified B> post(resource: T, bodyContent: B): HttpResponse {
+        return client.post(resource) {
+            contentType(ContentType.Application.Json)
+            setBody(bodyContent)
+        }
     }
 }

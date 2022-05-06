@@ -1,6 +1,7 @@
 package component.user
 
 import ajax.Api
+import io.ktor.client.call.body
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -8,7 +9,7 @@ import kotlinx.coroutines.launch
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
-import me.agaman.kotlinfullstack.route.ApiRoute
+import me.agaman.kotlinfullstack.route.User
 import mui.material.*
 import mui.system.responsive
 import react.useEffectOnce
@@ -42,7 +43,7 @@ val UserManager by NC {
         onStateEvent(UserManagerEvent.Loading)
         return MainScope().launch {
             try {
-                val response = Api.get<UserListResponse>(ApiRoute.USERS_LIST)
+                val response: UserListResponse = Api.get(User.List()).body()
                 delay(2000) // TODO Remove artificial delay added to check loading page
                 onStateEvent(UserManagerEvent.UsersList(response))
             } catch (e: Exception) {
@@ -55,7 +56,7 @@ val UserManager by NC {
         onStateEvent(UserManagerEvent.Loading)
         return MainScope().launch {
             try {
-                val response = Api.post<UserCreateResponse>(ApiRoute.USER_CREATE, UserCreateRequest(userName))
+                val response: UserCreateResponse = Api.post(User.Create(), UserCreateRequest(userName)).body()
                 delay(2000) // TODO Remove artificial delay added to check loading page
                 onStateEvent(UserManagerEvent.UserCreate(response))
             } catch (e: Exception) {

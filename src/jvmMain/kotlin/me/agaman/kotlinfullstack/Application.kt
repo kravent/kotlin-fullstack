@@ -1,26 +1,35 @@
 package me.agaman.kotlinfullstack
 
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
 import io.ktor.server.auth.*
-import io.ktor.server.html.*
-import io.ktor.server.http.content.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.compression.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
+import io.ktor.server.html.respondHtml
+import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.static
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.gzip
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
+import io.ktor.server.resources.Resources
+import io.ktor.server.resources.post
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import io.ktor.server.sessions.Sessions
 import kotlinx.html.*
 import me.agaman.kotlinfullstack.api.apiRouter
 import me.agaman.kotlinfullstack.features.*
-import me.agaman.kotlinfullstack.route.Route
+import me.agaman.kotlinfullstack.route.Api
 
 fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
+    install(Resources)
     install(ContentNegotiation) {
         json()
     }
@@ -49,26 +58,24 @@ fun Application.module() {
 
     routing {
         authenticate {
-            post(Route.LOGIN.path) {
+            post<Api.Login> {
                 val currentUser = call.principal<UserIdPrincipal>() ?: error("No auth found")
                 call.setApiSession(ApiSession(currentUserName = currentUser.name))
                 call.respondText { call.getCsrfToken() }
             }
 
-            post(Route.LOGOUT.path) {
+            post<Api.Logout> {
                 call.deleteApiSession()
                 call.respondText { call.getCsrfToken() }
             }
 
-            route(Route.API.path) {
-                apiRouter()
-            }
+            apiRouter()
         }
 
         get("/favicon.ico") {
             call.respond(HttpStatusCode.NotFound)
         }
-        static(Route.STATIC.path) {
+        static("/static") {
             resources("static")
         }
 

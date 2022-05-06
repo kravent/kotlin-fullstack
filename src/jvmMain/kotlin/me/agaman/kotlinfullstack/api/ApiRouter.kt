@@ -1,19 +1,22 @@
 package me.agaman.kotlinfullstack.api
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.call
+import io.ktor.server.request.receive
+import io.ktor.server.resources.get
+import io.ktor.server.resources.post
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.route
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
-import me.agaman.kotlinfullstack.route.ApiRoute
+import me.agaman.kotlinfullstack.route.User
 
 private val userList: MutableSet<String> = mutableSetOf()
 
 fun Route.apiRouter() {
-    post(ApiRoute.USER_CREATE.path) {
+    post<User.Create> {
         val request = call.receive<UserCreateRequest>()
         val error = if (userList.contains(request.userName)) {
             "User already created"
@@ -24,7 +27,7 @@ fun Route.apiRouter() {
         call.respond(UserCreateResponse(UserListResponse(userList.sorted()), error))
     }
 
-    get(ApiRoute.USERS_LIST.path) {
+    get<User.List> {
         call.respond(UserListResponse(userList.sorted()))
     }
 
