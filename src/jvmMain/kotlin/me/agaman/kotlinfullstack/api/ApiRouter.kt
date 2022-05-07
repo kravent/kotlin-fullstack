@@ -1,13 +1,11 @@
 package me.agaman.kotlinfullstack.api
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.resources.get
 import io.ktor.server.resources.post
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.route
 import me.agaman.kotlinfullstack.model.UserCreateRequest
 import me.agaman.kotlinfullstack.model.UserCreateResponse
 import me.agaman.kotlinfullstack.model.UserListResponse
@@ -29,11 +27,5 @@ fun Route.apiRouter() {
 
     get<User.List> {
         call.respond(UserListResponse(userList.sorted()))
-    }
-
-    route("{...}") {
-        handle {
-            call.respond(HttpStatusCode.NotFound)
-        }
     }
 }
