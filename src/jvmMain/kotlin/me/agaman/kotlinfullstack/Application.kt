@@ -40,7 +40,7 @@ fun Application.module() {
         apiSessionsCookie()
     }
     install(Csrf) {
-        validateHeader("X-CSRF") { it.call.getCsrfToken() }
+        csrfProvider = { it.getCsrfToken() }
     }
 
     authentication {

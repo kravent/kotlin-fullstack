@@ -1,5 +1,6 @@
 package ajax
 
+import ajax.features.Csrf
 import component.store.LogoutStoreAction
 import component.store.Store
 import io.ktor.client.HttpClient
@@ -8,7 +9,6 @@ import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.post
@@ -20,19 +20,14 @@ import io.ktor.serialization.kotlinx.json.json
 import utils.CsrfTokenHandler
 import me.agaman.kotlinfullstack.route.Api as ApiRoute
 
-class ApiUnauthoridedException(response: HttpResponse) : ResponseException(response, "Unauthorided")
-class ApiForbiddenException(response: HttpResponse) : ResponseException(response, "Forbidden")
-class ApiException(response: HttpResponse, text: String) : ResponseException(response, text)
-
 object Api {
     val client = HttpClient(Js) {
         install(Resources)
         install(ContentNegotiation) {
             json()
         }
-        defaultRequest {
-            // TODO add headers only to non GET methods
-            headers.append("X-CSRF", CsrfTokenHandler.getToken())
+        install(Csrf) {
+            csrfProvider = { CsrfTokenHandler.getToken() }
         }
         HttpResponseValidator {
             validateResponse { response ->
@@ -83,3 +78,7 @@ object Api {
         }
     }
 }
+
+class ApiUnauthoridedException(response: HttpResponse) : ResponseException(response, "Unauthorided")
+class ApiForbiddenException(response: HttpResponse) : ResponseException(response, "Forbidden")
+class ApiException(response: HttpResponse, text: String) : ResponseException(response, text)

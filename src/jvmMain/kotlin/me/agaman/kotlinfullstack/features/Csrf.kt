@@ -9,56 +9,31 @@ import io.ktor.util.pipeline.*
 import java.security.SecureRandom
 import java.util.*
 
-object CsrfTokenProvider {
-    private val secureRandom = SecureRandom()
+class Csrf(val config: Config) {
+    @KtorDsl
+    class Config {
+        var ignoredMethods: Set<HttpMethod> = setOf(HttpMethod.Get)
+        var headerName: String = "X-CSRF"
+        var csrfProvider: (ApplicationCall) -> String? = { null }
+    }
 
-    fun generateRandomToken(): String =
-        ByteArray(256)
-            .also { secureRandom.nextBytes(it) }
-            .let { Base64.getEncoder().encodeToString(it) }
-}
+    companion object Plugin : BaseApplicationPlugin<ApplicationCallPipeline, Config, Csrf> {
+        override val key: AttributeKey<Csrf> = AttributeKey("Csrf")
 
-val Csrf: RouteScopedPlugin<CsrfConfig> = createRouteScopedPlugin("Csrf", ::CsrfConfig) {
-    val validators = pluginConfig.getValidators()
+        override fun install(pipeline: ApplicationCallPipeline, configure: Config.() -> Unit): Csrf {
+            val plugin = Csrf(Config().also(configure))
 
-    on(PluginInterception) {
-        if (call.request.httpMethod != HttpMethod.Get) {
-            if (validators.any { !it(call.request) }) {
-                call.respond(HttpStatusCode.Forbidden)
-                finish()
+            pipeline.intercept(ApplicationCallPipeline.Plugins) {
+                if (!plugin.config.ignoredMethods.contains(context.request.httpMethod)) {
+                    val expectedCsrf = plugin.config.csrfProvider(call)
+                    if (context.request.header(plugin.config.headerName) != expectedCsrf) {
+                        context.respond(HttpStatusCode.Forbidden)
+                        finish()
+                    }
+                }
             }
-        }
-    }
-}
 
-typealias CsrfValidator = (ApplicationRequest) -> Boolean
-
-@KtorDsl
-class CsrfConfig {
-    private var validators: MutableList<CsrfValidator> = mutableListOf()
-
-    fun getValidators() = validators.toList()
-
-    fun validator(validator: CsrfValidator) {
-        this.validators.add(validator)
-    }
-
-    fun validateHeader(headerName: String, calculateExpectedContent: (ApplicationRequest) -> String?) {
-        validator { request ->
-            calculateExpectedContent(request)
-                ?.let { request.header(headerName) == it }
-                ?: true
-        }
-    }
-}
-
-private object PluginInterception : Hook<suspend PipelineContext<Unit, ApplicationCall>.() -> Unit> {
-    override fun install(
-        pipeline: ApplicationCallPipeline,
-        handler: suspend PipelineContext<Unit, ApplicationCall>.() -> Unit,
-    ) {
-        pipeline.intercept(ApplicationCallPipeline.Plugins) {
-            handler()
+            return plugin
         }
     }
 }
