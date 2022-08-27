@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("multiplatform") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     application //to run JVM part
 }
 
@@ -15,16 +15,16 @@ repositories {
     mavenCentral()
 }
 
-val serializationVersion = "1.3.0"
-val ktorVersion = "2.0.1"
-val logbackVersion = "1.2.3"
-val reactVersion = "18.1.0"
+val serializationVersion = "1.3.3"
+val ktorVersion = "2.1.0"
+val logbackVersion = "1.2.11"
+val reactVersion = "18.2.0"
 val reactRouterVersion = "6.3.0"
 val reduxVersion = "4.1.2"
 val reactReduxVersion = "7.2.6"
-val muiVersion = "5.6.3"
-val muiIconsVersion = "5.6.2"
-val kotlinWrappersVersion = "pre.333"
+val muiVersion = "5.9.1"
+val muiIconsVersion = "5.8.4"
+val kotlinWrappersVersion = "pre.377"
 
 kotlin {
     jvm {

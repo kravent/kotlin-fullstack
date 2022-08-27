@@ -61,7 +61,7 @@ val LoginPage by NC { props: LoginPageProps ->
 
         Grid {
             item = true
-            xs = 4
+            this.asDynamic().xs = 4
             Paper {
                 sx = jso {
                     marginTop = 50.px

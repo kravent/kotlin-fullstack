@@ -79,7 +79,7 @@ val UserManager by NC {
         state.users?.also {
             Grid {
                 item = true
-                lg = 12
+                this.asDynamic().lg = 12
                 UserList {
                     userList = it
                 }
@@ -88,7 +88,7 @@ val UserManager by NC {
         state.error?.also { error ->
             Grid {
                 item = true
-                lg = 6
+                this.asDynamic().lg = 6
                 Alert {
                     severity = AlertColor.error
                     +error
@@ -97,7 +97,7 @@ val UserManager by NC {
         }
         Grid {
             item = true
-            lg = 6
+            this.asDynamic().lg = 6
             if (state.users != null) {
                 UserCreator {
                     disabled = state.loading
@@ -113,7 +113,7 @@ val UserManager by NC {
         if (state.loading) {
             Grid {
                 item = true
-                lg = 12
+                this.asDynamic().lg = 12
                 CircularProgress {}
             }
         }

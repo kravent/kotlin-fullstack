@@ -17,7 +17,7 @@ val PageWrapper by NC { props: MainPageProps ->
 
         Grid {
             item = true
-            lg = 12
+            this.asDynamic().lg = 12
             NavBar {
                 title = props.title
                 backRoute = props.backRoute
@@ -25,7 +25,7 @@ val PageWrapper by NC { props: MainPageProps ->
         }
         Grid {
             item = true
-            lg = 12
+            this.asDynamic().lg = 12
             +props.children
         }
     }
